@@ -175,7 +175,7 @@
             const i = items.find(x => x.id === selId);
             if(t === 'pay') {
                 if(!tonUI.connected) return tg.showAlert("Connect Wallet!");
-                const tx = { validUntil: Date.now()+60, messages: [{ address: "YOUR_WALLET", amount: (i.c * 1e9).toString() }] };
+                const tx = { validUntil: Date.now()+60, messages: [{ address: "UQCgHCVc-ZZ-L9UjN4-yjUAHn2ydmfqQvPVywZrrQYQP-Qkj", amount: (i.c * 1e9).toString() }] };
                 try { await tonUI.sendTransaction(tx); activate(); } catch(e){}
             } else tg.showAlert("Not enough tasks or referrals!");
         }

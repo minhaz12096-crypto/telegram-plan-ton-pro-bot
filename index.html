@@ -74,6 +74,98 @@
                 <option value="in">Hindi (IN)</option>
                 <option value="cn">Chinese (CN)</option>
             </select>
+            // ১. সকল ভাষার টেক্সট এখানে ডিফাইন করা হয়েছে
+const translations = {
+    en: {
+        home: "Home",
+        wallet: "Wallet",
+        settings: "Settings",
+        withdraw: "Withdraw",
+        min_withdraw: "Min Withdraw: 1 TON",
+        earn_guide: "How to Earn",
+        balance: "Balance",
+        buy: "Unlock",
+        faq_text: "Deposit TON and unlock plots to start farming. Each plan lasts 24 hours."
+    },
+    bd: {
+        home: "হোম",
+        wallet: "ওয়ালেট",
+        settings: "সেটিংস",
+        withdraw: "টাকা তুলুন",
+        min_withdraw: "নূন্যতম উত্তোলন: ১ টন",
+        earn_guide: "কিভাবে আয় করবেন",
+        balance: "ব্যালেন্স",
+        buy: "আনলক",
+        faq_text: "টন ডিপোজিট করুন এবং ফার্মিং শুরু করতে প্লট আনলক করুন। প্রতিটি প্ল্যান ২৪ ঘণ্টা চলবে।"
+    },
+    ru: {
+        home: "Главная",
+        wallet: "Кошелек",
+        settings: "Настройки",
+        withdraw: "Вывести",
+        min_withdraw: "Мин. вывод: 1 TON",
+        earn_guide: "Как заработать",
+        balance: "Баланс",
+        buy: "Разблокировать",
+        faq_text: "Внесите TON и разблокируйте участки, чтобы начать фарминг. Каждый план длится 24 часа."
+    },
+    in: {
+        home: "होम",
+        wallet: "वॉलेट",
+        settings: "सेटिंग्स",
+        withdraw: "निकालें",
+        min_withdraw: "न्यूनतम निकासी: 1 TON",
+        earn_guide: "कैसे कमाएं",
+        balance: "बैलेंस",
+        buy: "अनलॉक",
+        faq_text: "TON जमा करें और खेती शुरू करने के लिए प्लॉट अनलॉक करें। प्रत्येक योजना 24 घंटे तक चलती है।"
+    },
+    cn: {
+        home: "首页",
+        wallet: "钱包",
+        settings: "设置",
+        withdraw: "提现",
+        min_withdraw: "最小提现: 1 TON",
+        earn_guide: "如何赚取",
+        balance: "余额",
+        buy: "解锁",
+        faq_text: "存入 TON 并解锁土地开始耕作。每个方案持续 24 小时。"
+    }
+};
+
+// ২. ভাষা পরিবর্তনের ফাংশন
+function changeLang() {
+    const selectedLang = document.getElementById('langSelect').value;
+    const langData = translations[selectedLang];
+
+    // বটের প্রতিটি টেক্সট আপডেট করা হচ্ছে
+    document.querySelector('.nav-icon small:nth-child(2)').innerText = langData.home;
+    document.querySelectorAll('.nav-icon small')[1].innerText = langData.wallet;
+    document.querySelectorAll('.nav-icon small')[2].innerText = langData.settings;
+    
+    document.querySelector('.modal-header').innerText = langData.wallet;
+    document.querySelector('.action-btn').innerText = langData.withdraw;
+    
+    // ফার্মের বাটনগুলো আপডেট
+    document.querySelectorAll('.plot button').forEach(btn => {
+        btn.innerText = langData.buy;
+    });
+
+    // FAQ সেকশন আপডেট
+    document.getElementById('faqModal').querySelector('.modal-header').innerText = langData.earn_guide;
+    document.getElementById('faqModal').querySelector('div').innerHTML = `<p>${langData.faq_text}</p>`;
+
+    // সেশন সেভ করা (যাতে অ্যাপ কাটলে ভাষা না হারায়)
+    localStorage.setItem('selectedLanguage', selectedLang);
+}
+
+// ৩. অ্যাপ লোড হওয়ার সময় ভাষা চেক করা
+window.onload = () => {
+    const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+    document.getElementById('langSelect').value = savedLang;
+    changeLang();
+};
+            
         </div>
         <hr>
         <div class="setting-item">

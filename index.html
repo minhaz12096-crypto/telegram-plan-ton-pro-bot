@@ -84,9 +84,11 @@
 
         // TON Connect
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/',
-            buttonRootId: 'ton-connect-button'
-        });
+    // এখানে আপনার নিজের ডোমেইন লিঙ্কটি নিশ্চিত করুন
+    manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/tonconnect-manifest.json',
+    buttonRootId: 'ton-connect-button'
+});
+
 
         // Mining Logic
         let score = 0.0000;

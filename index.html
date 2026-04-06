@@ -3,162 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Plant-TON Official</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <title>Plant-TON Pro Bot</title>
     
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #2c1b0e; color: white; font-family: 'Arial', sans-serif; overflow: hidden; }
+        :root { --primary: #4caf50; --accent: #fbc02d; --dark-bg: #2c1b0e; }
+        body, html { margin: 0; padding: 0; height: 100vh; font-family: 'Arial', sans-serif; background: var(--dark-bg); color: white; overflow: hidden; }
 
         /* 1. Video Loading Screen */
-        #loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-        }
-        video#bg-video { width: 100%; height: auto; border-radius: 10px; }
-        .progress-container { width: 80%; height: 10px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 20px; overflow: hidden; }
-        .progress-bar { width: 0%; height: 100%; background: #4caf50; transition: 0.5s; }
+        #video-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; background: #000; }
+        #video-loader video { width: 100%; height: 100%; object-fit: cover; }
 
         /* 2. Main Game UI */
-        #main-game { display: none; height: 100vh; background: url('https://i.postimg.cc/0jLnTqx9/1775464928626.png') center/cover; }
-        
-        .top-bar { display: flex; justify-content: space-between; padding: 15px; background: rgba(0,0,0,0.4); }
-        .stat-box { background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
+        #app { display: none; height: 100vh; background: url('https://i.postimg.cc/0jLnTqx9/1775464928626.png') center/cover; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 0; }
+        .content { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; }
 
-        /* 3. Farm Grid */
-        .farm-grid { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; 
-            padding: 20px; height: 60vh; overflow-y: auto; margin-top: 50px;
-        }
-        .plot {
-            background: rgba(101, 67, 33, 0.9); border: 2px solid #3e2723;
-            border-radius: 12px; height: 110px; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; position: relative;
-        }
-        .plot.locked::after { content: '🔒'; font-size: 20px; opacity: 0.6; }
+        /* Header Stats */
+        .header { display: flex; justify-content: space-between; padding: 15px; background: rgba(0,0,0,0.6); }
+        .stat-box { background: #8d6e63; border: 2px solid #b8860b; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
 
-        /* 4. Bottom Menu */
-        .bottom-nav {
-            position: fixed; bottom: 0; width: 100%; background: #3e2723;
-            display: flex; justify-content: space-around; padding: 10px 0;
-            border-top: 2px solid #5d4037;
-        }
-        .nav-item { text-align: center; cursor: pointer; color: #a1887f; font-size: 12px; }
-        .nav-item.active { color: #fbc02d; font-weight: bold; }
-        .nav-item img { width: 24px; height: 24px; display: block; margin: 0 auto 4px; }
+        /* Farm Grid */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; margin-top: 10px; }
+        .plot { height: 120px; background: rgba(139, 69, 19, 0.9); border: 2px solid #5d4037; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .plot.locked::after { content: '🔒'; font-size: 24px; margin-top: 5px; opacity: 0.6; }
+        .plot.active { border-color: var(--primary); background: rgba(76, 175, 80, 0.3); }
+        .plot b { font-size: 14px; color: var(--accent); }
 
-        /* Popups */
-        .modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90%; background: #f3e5f5; border: 4px solid #8d6e63; border-radius: 15px;
-            color: #3e2723; padding: 20px; z-index: 10000;
-        }
+        /* Modals */
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #edc9a1; border-radius: 20px; border: 5px solid #8d6e63; padding: 20px; z-index: 2000; color: #2c1b0e; }
+        .modal-header { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 15px; border-bottom: 2px solid #8d6e63; }
+        .close-btn { position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; }
+
+        /* Buttons */
+        .btn-opt { width: 100%; padding: 12px; margin: 5px 0; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; display: flex; justify-content: space-between; }
+        .pay-btn { background: #4caf50; }
+        .task-btn { background: #2196f3; }
+        .ref-btn { background: #ff9800; }
+
+        /* Bottom Nav */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-around; background: #3e2723; padding: 12px 0; border-top: 3px solid var(--primary); }
+        .nav-item { text-align: center; font-size: 12px; cursor: pointer; opacity: 0.7; }
+        .nav-item.active { opacity: 1; color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <video id="bg-video" autoplay muted playsinline>
-            <source src="আপনার_ভিডিও_লিঙ্ক_এখানে.mp4" type="video/mp4">
+    <div id="video-loader">
+        <video id="intro-video" autoplay muted playsinline>
+            <source src="YOUR_VIDEO_URL.mp4" type="video/mp4">
         </video>
-        <div class="progress-container">
-            <div class="progress-bar" id="p-bar"></div>
-        </div>
-        <p id="load-text" style="margin-top: 10px;">Loading...</p>
     </div>
 
-    <div id="main-game">
-        <div class="top-bar">
-            <div class="stat-box">💎 <span id="bal-ton">0.0000</span></div>
-            <div class="stat-box">📦 <span id="bal-beans">1800.5</span></div>
-            <div onclick="openModal('settingsModal')">⚙️</div>
-        </div>
-
-        <div class="farm-grid" id="garden">
+    <div id="app">
+        <div class="overlay"></div>
+        <div class="content">
+            <div class="header">
+                <div class="stat-box">💎 <span id="balance">0.0000</span></div>
+                <div id="ton-connect-button"></div>
+                <div onclick="openModal('settings-modal')">⚙️</div>
             </div>
 
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="showTab('home')">🏠<br><span class="t-home">Home</span></div>
-            <div class="nav-item" onclick="openModal('walletModal')">💳<br><span class="t-wallet">Wallet</span></div>
-            <div class="nav-item" onclick="openModal('settingsModal')">⚙️<br><span class="t-settings">Settings</span></div>
+            <div class="grid" id="farm-grid">
+                </div>
+
+            <div class="nav-bar">
+                <div class="nav-item active" onclick="location.reload()">🏠<br><span class="lang-home">Home</span></div>
+                <div class="nav-item" onclick="openModal('wallet-modal')">💳<br><span class="lang-wallet">Wallet</span></div>
+                <div class="nav-item" onclick="openModal('settings-modal')">⚙️<br><span class="lang-settings">Settings</span></div>
+            </div>
         </div>
     </div>
 
-    <div id="walletModal" class="modal">
-        <h3 class="t-wallet">Wallet</h3><hr>
-        <div style="margin: 15px 0;">
-            <p>TON: <span id="w-bal">0.0000</span></p>
-            <input type="number" placeholder="0.0000" id="w-amt" style="width:100%; padding:10px; margin:10px 0;">
-            <button onclick="withdraw()" style="width:100%; background:#fbc02d; padding:10px; border:none; font-weight:bold;">Withdraw</button>
+    <div id="unlock-modal" class="modal">
+        <span class="close-btn" onclick="closeModal('unlock-modal')">✖</span>
+        <div class="modal-header" id="unlock-title">Unlock Plot</div>
+        <div class="btn-opt pay-btn" onclick="handleUnlock('pay')">
+            <span>Pay with TON</span> <span id="price-val">0.5</span>
         </div>
-        <button onclick="closeModal('walletModal')">Close</button>
+        <div class="btn-opt task-btn" onclick="handleUnlock('task')">
+            <span>Complete Tasks</span> <span>5/5</span>
+        </div>
+        <div class="btn-opt ref-btn" onclick="handleUnlock('ref')">
+            <span>Refer Friends</span> <span id="ref-val">10</span>
+        </div>
     </div>
 
-    <div id="settingsModal" class="modal">
-        <h3 class="t-settings">Settings</h3><hr>
-        <div style="padding: 10px 0;">
-            <p>🌐 Language:</p>
-            <select id="langSelect" onchange="applyLanguage()" style="width:100%; padding:8px;">
-                <option value="en">English</option>
-                <option value="bd">Bengali</option>
-                <option value="ru">Russian</option>
-                <option value="in">Hindi</option>
-                <option value="cn">Chinese</option>
-            </select>
-        </div>
-        <p>🎵 Music: <button onclick="toggleMusic()">ON/OFF</button></p>
-        <button onclick="closeModal('settingsModal')">Close</button>
+    <div id="wallet-modal" class="modal">
+        <span class="close-btn" onclick="closeModal('wallet-modal')">✖</span>
+        <div class="modal-header lang-wallet">Wallet</div>
+        <p>Current Balance: <b id="w-bal">0.0000</b> TON</p>
+        <input type="number" id="amt" placeholder="Amount" style="width:90%; padding:10px; border-radius:5px; border:1px solid #ccc;">
+        <button class="btn-opt pay-btn" onclick="withdraw()" style="margin-top:15px; justify-content:center;">WITHDRAW</button>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <span class="close-btn" onclick="closeModal('settings-modal')">✖</span>
+        <div class="modal-header lang-settings">Settings</div>
+        <p>Select Language:</p>
+        <select id="lang-select" onchange="updateLanguage()" style="width:100%; padding:10px; font-weight:bold;">
+            <option value="en">English (US)</option>
+            <option value="bd">Bengali (BD)</option>
+            <option value="ru">Russian (RU)</option>
+            <option value="in">Hindi (IN)</option>
+            <option value="cn">Chinese (CN)</option>
+        </select>
+        <button class="btn-opt task-btn" style="margin-top:20px; justify-content:center;" onclick="openModal('faq-modal')">FAQ & HELP</button>
     </div>
 
     <script>
-        // --- Language Database ---
-        const langDict = {
-            en: { home: "Home", wallet: "Wallet", settings: "Settings", load: "Loading..." },
-            bd: { home: "হোম", wallet: "ওয়ালেট", settings: "সেটিংস", load: "লোড হচ্ছে..." },
-            ru: { home: "Главная", wallet: "Кошелек", settings: "Настройки", load: "Загрузка..." },
-            in: { home: "होम", wallet: "वॉलेट", settings: "सेटिंग्स", load: "लोड हो रहा है..." },
-            cn: { home: "首页", wallet: "钱包", settings: "设置", load: "加载中..." }
+        // --- CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYaSQbU380U6hcUmBgkDr4WAEmEu45X_U",
+            authDomain: "tonnow-pro.firebaseapp.com",
+            databaseURL: "https://tonnow-pro-default-rtdb.firebaseio.com",
+            projectId: "tonnow-pro",
+            storageBucket: "tonnow-pro.firebasestorage.app",
+            messagingSenderId: "585362095075",
+            appId: "1:585362095075:web:a94096a650ab74f3e03ed6",
+            measurementId: "G-SS1QH64NRJ"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const tg = window.Telegram.WebApp;
+        const userId = tg.initDataUnsafe?.user?.id || "user_test";
+
+        // --- VIDEO LOADER LOGIC ---
+        const video = document.getElementById('intro-video');
+        video.onended = () => {
+            document.getElementById('video-loader').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
         };
 
-        function applyLanguage() {
-            const lang = document.getElementById('langSelect').value;
-            const d = langDict[lang];
-            document.querySelector('.t-home').innerText = d.home;
-            document.querySelectorAll('.t-wallet').forEach(el => el.innerText = d.wallet);
-            document.querySelectorAll('.t-settings').forEach(el => el.innerText = d.settings);
-            document.getElementById('load-text').innerText = d.load;
+        // --- TON CONNECT ---
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+        });
+
+        // --- GAME DATA ---
+        const items = [
+            {id: 1, name: "Potato (আলু)", cost: 0.5, refs: 5},
+            {id: 2, name: "Mango (আম)", cost: 1.0, refs: 10},
+            {id: 3, name: "Jackfruit (কাঁঠাল)", cost: 2.0, refs: 20},
+            {id: 4, name: "Papaya (পেঁপে)", cost: 5.0, refs: 40},
+            {id: 5, name: "Carrot (গাজর)", cost: 10.0, refs: 80},
+            {id: 6, name: "Eggplant (বেগুন)", cost: 20.0, refs: 150}
+        ];
+
+        let selectedId = null;
+
+        function renderGrid() {
+            const grid = document.getElementById('farm-grid');
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'plot locked';
+                div.innerHTML = `<b>${item.name}</b><br><small>${item.cost} TON</small>`;
+                div.onclick = () => {
+                    selectedId = item.id;
+                    document.getElementById('unlock-title').innerText = "Unlock " + item.name;
+                    document.getElementById('price-val').innerText = item.cost + " TON";
+                    document.getElementById('ref-val').innerText = item.refs;
+                    openModal('unlock-modal');
+                };
+                grid.appendChild(div);
+            });
         }
 
-        // --- Video Loader Logic ---
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += 5;
-            document.getElementById('p-bar').style.width = progress + "%";
-            if(progress >= 100) {
-                clearInterval(interval);
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('main-game').style.display = 'block';
+        // --- ACTION HANDLERS ---
+        async function handleUnlock(type) {
+            const item = items.find(i => i.id === selectedId);
+            if (type === 'pay') {
+                if (!tonConnectUI.connected) return tg.showAlert("Connect Wallet!");
+                const tx = {
+                    validUntil: Math.floor(Date.now() / 1000) + 60,
+                    messages: [{ address: "YOUR_WALLET_ADDRESS", amount: (item.cost * 1000000000).toString() }]
+                };
+                try { await tonConnectUI.sendTransaction(tx); activatePlot(); } catch(e) {}
+            } else {
+                tg.showAlert("Requirement not met! Complete tasks or invites.");
             }
-        }, 150);
+        }
 
-        // --- Modal Control ---
+        function activatePlot() {
+            db.ref('users/' + userId + '/plots/' + selectedId).set({ active: true, time: Date.now() });
+            tg.showAlert("Success! Valid for 24 Hours.");
+            closeModal('unlock-modal');
+        }
+
+        // --- UTILS ---
         function openModal(id) { document.getElementById(id).style.display = 'block'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // --- Initialize ---
-        window.onload = () => {
-            applyLanguage();
-            // Load Farm Plots
-            const grid = document.getElementById('garden');
-            for(let i=1; i<=9; i++) {
-                const plot = document.createElement('div');
-                plot.className = 'plot locked';
-                plot.innerHTML = `<span>x${i*5}</span>`;
-                grid.appendChild(plot);
-            }
+        // --- LANGUAGE SYSTEM ---
+        const langMap = {
+            en: { home: "Home", wallet: "Wallet", settings: "Settings" },
+            bd: { home: "হোম", wallet: "ওয়ালেট", settings: "সেটিংস" },
+            ru: { home: "Главная", wallet: "Кошелек", settings: "Настройки" },
+            in: { home: "होम", wallet: "वॉलेट", settings: "सेटिंग्स" },
+            cn: { home: "首页", wallet: "钱包", settings: "设置" }
         };
+
+        function updateLanguage() {
+            const l = document.getElementById('lang-select').value;
+            document.querySelector('.lang-home').innerText = langMap[l].home;
+            document.querySelectorAll('.lang-wallet').forEach(el => el.innerText = langMap[l].wallet);
+            document.querySelectorAll('.lang-settings').forEach(el => el.innerText = langMap[l].settings);
+        }
+
+        renderGrid();
     </script>
 </body>
 </html>

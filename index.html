@@ -3,251 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Plant-TON Pro: Coffee Garden Edition</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <title>Plant-TON Official</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    
     <style>
-        body, html { margin: 0; padding: 0; height: 100vh; font-family: 'Arial', sans-serif; background: #2c1b0e; color: white; overflow: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #2c1b0e; color: white; font-family: 'Arial', sans-serif; overflow: hidden; }
+
+        /* 1. Video Loading Screen */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        video#bg-video { width: 100%; height: auto; border-radius: 10px; }
+        .progress-container { width: 80%; height: 10px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: #4caf50; transition: 0.5s; }
+
+        /* 2. Main Game UI */
+        #main-game { display: none; height: 100vh; background: url('https://i.postimg.cc/0jLnTqx9/1775464928626.png') center/cover; }
         
-        /* Game Header */
-        .game-header { background: rgba(0,0,0,0.5); padding: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #5d4037; }
-        .balance-item { display: flex; align-items: center; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 15px; font-size: 14px; }
+        .top-bar { display: flex; justify-content: space-between; padding: 15px; background: rgba(0,0,0,0.4); }
+        .stat-box { background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
 
-        /* Farm Grid */
-        .farm-container { height: 70vh; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; overflow-y: auto; background: url('https://i.postimg.cc/0jLnTqx9/1775464928626.png') center/cover; }
-        .plot { position: relative; background: rgba(139, 69, 19, 0.8); border-radius: 10px; border: 2px solid #5d4037; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; }
-        .plot.locked::after { content: '🔒'; font-size: 20px; opacity: 0.7; }
-        .plot.active { background: rgba(76, 175, 80, 0.4); border-color: #4caf50; }
-        .plot span { font-size: 10px; margin-top: 5px; font-weight: bold; }
+        /* 3. Farm Grid */
+        .farm-grid { 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; 
+            padding: 20px; height: 60vh; overflow-y: auto; margin-top: 50px;
+        }
+        .plot {
+            background: rgba(101, 67, 33, 0.9); border: 2px solid #3e2723;
+            border-radius: 12px; height: 110px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; position: relative;
+        }
+        .plot.locked::after { content: '🔒'; font-size: 20px; opacity: 0.6; }
 
-        /* Modal / UI Boxes */
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #edc9a1; border: 5px solid #8d6e63; border-radius: 20px; padding: 20px; z-index: 1000; color: #2c1b0e; }
-        .modal-header { text-align: center; font-weight: bold; font-size: 20px; margin-bottom: 15px; text-transform: uppercase; border-bottom: 2px solid #8d6e63; padding-bottom: 5px; }
-        .close-btn { position: absolute; right: 10px; top: 10px; cursor: pointer; font-size: 24px; }
+        /* 4. Bottom Menu */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; background: #3e2723;
+            display: flex; justify-content: space-around; padding: 10px 0;
+            border-top: 2px solid #5d4037;
+        }
+        .nav-item { text-align: center; cursor: pointer; color: #a1887f; font-size: 12px; }
+        .nav-item.active { color: #fbc02d; font-weight: bold; }
+        .nav-item img { width: 24px; height: 24px; display: block; margin: 0 auto 4px; }
 
-        /* Buttons */
-        .action-btn { width: 100%; background: #fbc02d; border: none; padding: 12px; border-radius: 10px; font-weight: bold; margin-top: 10px; color: #5d4037; box-shadow: 0 4px #b8860b; }
-        .action-btn:active { transform: translateY(2px); box-shadow: 0 2px #b8860b; }
-
-        /* Navigation Bar */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-around; background: #3e2723; padding: 12px 0; }
-        .nav-icon { font-size: 20px; opacity: 0.7; cursor: pointer; text-align: center; }
-        .nav-icon.active { opacity: 1; color: #fbc02d; }
+        /* Popups */
+        .modal {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; background: #f3e5f5; border: 4px solid #8d6e63; border-radius: 15px;
+            color: #3e2723; padding: 20px; z-index: 10000;
+        }
     </style>
 </head>
 <body>
 
-    <div class="game-header">
-        <div class="balance-item" onclick="openModal('walletModal')">💎 <span id="balance">0.0000</span></div>
-        <div class="balance-item">📦 <span id="beans">1800.5</span></div>
-        <div onclick="openModal('settingsModal')" style="cursor:pointer">⚙️</div>
+    <div id="loading-screen">
+        <video id="bg-video" autoplay muted playsinline>
+            <source src="আপনার_ভিডিও_লিঙ্ক_এখানে.mp4" type="video/mp4">
+        </video>
+        <div class="progress-container">
+            <div class="progress-bar" id="p-bar"></div>
+        </div>
+        <p id="load-text" style="margin-top: 10px;">Loading...</p>
     </div>
 
-    <div class="farm-container" id="farmGrid">
+    <div id="main-game">
+        <div class="top-bar">
+            <div class="stat-box">💎 <span id="bal-ton">0.0000</span></div>
+            <div class="stat-box">📦 <span id="bal-beans">1800.5</span></div>
+            <div onclick="openModal('settingsModal')">⚙️</div>
         </div>
 
-    <div id="walletModal" class="modal">
-        <span class="close-btn" onclick="closeModal('walletModal')">✖</span>
-        <div class="modal-header">Wallet</div>
-        <div style="background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-             <p>Balance: <b id="walletBal">0.0000</b> TON</p>
-             <input type="number" id="withdrawAmount" placeholder="Amount: 0.0000" style="width: 100%; padding: 8px; margin: 10px 0;">
-             <p style="font-size: 11px; color: #8d6e63;">Min Withdraw: 1 TON | Fee: 0.05</p>
-             <button class="action-btn" onclick="processWithdraw()">Withdraw</button>
+        <div class="farm-grid" id="garden">
+            </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="showTab('home')">🏠<br><span class="t-home">Home</span></div>
+            <div class="nav-item" onclick="openModal('walletModal')">💳<br><span class="t-wallet">Wallet</span></div>
+            <div class="nav-item" onclick="openModal('settingsModal')">⚙️<br><span class="t-settings">Settings</span></div>
         </div>
-        <div id="ton-connect-button"></div>
+    </div>
+
+    <div id="walletModal" class="modal">
+        <h3 class="t-wallet">Wallet</h3><hr>
+        <div style="margin: 15px 0;">
+            <p>TON: <span id="w-bal">0.0000</span></p>
+            <input type="number" placeholder="0.0000" id="w-amt" style="width:100%; padding:10px; margin:10px 0;">
+            <button onclick="withdraw()" style="width:100%; background:#fbc02d; padding:10px; border:none; font-weight:bold;">Withdraw</button>
+        </div>
+        <button onclick="closeModal('walletModal')">Close</button>
     </div>
 
     <div id="settingsModal" class="modal">
-        <span class="close-btn" onclick="closeModal('settingsModal')">✖</span>
-        <div class="modal-header">Settings</div>
-        <div class="setting-item">
-            🌐 Language: 
-            <select id="langSelect" onchange="changeLang()" style="padding: 5px; border-radius: 5px;">
-                <option value="en">English (US)</option>
-                <option value="bd">Bengali (BD)</option>
-                <option value="ru">Russian (RU)</option>
-                <option value="in">Hindi (IN)</option>
-                <option value="cn">Chinese (CN)</option>
+        <h3 class="t-settings">Settings</h3><hr>
+        <div style="padding: 10px 0;">
+            <p>🌐 Language:</p>
+            <select id="langSelect" onchange="applyLanguage()" style="width:100%; padding:8px;">
+                <option value="en">English</option>
+                <option value="bd">Bengali</option>
+                <option value="ru">Russian</option>
+                <option value="in">Hindi</option>
+                <option value="cn">Chinese</option>
             </select>
-            // ১. সকল ভাষার টেক্সট এখানে ডিফাইন করা হয়েছে
-const translations = {
-    en: {
-        home: "Home",
-        wallet: "Wallet",
-        settings: "Settings",
-        withdraw: "Withdraw",
-        min_withdraw: "Min Withdraw: 1 TON",
-        earn_guide: "How to Earn",
-        balance: "Balance",
-        buy: "Unlock",
-        faq_text: "Deposit TON and unlock plots to start farming. Each plan lasts 24 hours."
-    },
-    bd: {
-        home: "হোম",
-        wallet: "ওয়ালেট",
-        settings: "সেটিংস",
-        withdraw: "টাকা তুলুন",
-        min_withdraw: "নূন্যতম উত্তোলন: ১ টন",
-        earn_guide: "কিভাবে আয় করবেন",
-        balance: "ব্যালেন্স",
-        buy: "আনলক",
-        faq_text: "টন ডিপোজিট করুন এবং ফার্মিং শুরু করতে প্লট আনলক করুন। প্রতিটি প্ল্যান ২৪ ঘণ্টা চলবে।"
-    },
-    ru: {
-        home: "Главная",
-        wallet: "Кошелек",
-        settings: "Настройки",
-        withdraw: "Вывести",
-        min_withdraw: "Мин. вывод: 1 TON",
-        earn_guide: "Как заработать",
-        balance: "Баланс",
-        buy: "Разблокировать",
-        faq_text: "Внесите TON и разблокируйте участки, чтобы начать фарминг. Каждый план длится 24 часа."
-    },
-    in: {
-        home: "होम",
-        wallet: "वॉलेट",
-        settings: "सेटिंग्स",
-        withdraw: "निकालें",
-        min_withdraw: "न्यूनतम निकासी: 1 TON",
-        earn_guide: "कैसे कमाएं",
-        balance: "बैलेंस",
-        buy: "अनलॉक",
-        faq_text: "TON जमा करें और खेती शुरू करने के लिए प्लॉट अनलॉक करें। प्रत्येक योजना 24 घंटे तक चलती है।"
-    },
-    cn: {
-        home: "首页",
-        wallet: "钱包",
-        settings: "设置",
-        withdraw: "提现",
-        min_withdraw: "最小提现: 1 TON",
-        earn_guide: "如何赚取",
-        balance: "余额",
-        buy: "解锁",
-        faq_text: "存入 TON 并解锁土地开始耕作。每个方案持续 24 小时。"
-    }
-};
-
-// ২. ভাষা পরিবর্তনের ফাংশন
-function changeLang() {
-    const selectedLang = document.getElementById('langSelect').value;
-    const langData = translations[selectedLang];
-
-    // বটের প্রতিটি টেক্সট আপডেট করা হচ্ছে
-    document.querySelector('.nav-icon small:nth-child(2)').innerText = langData.home;
-    document.querySelectorAll('.nav-icon small')[1].innerText = langData.wallet;
-    document.querySelectorAll('.nav-icon small')[2].innerText = langData.settings;
-    
-    document.querySelector('.modal-header').innerText = langData.wallet;
-    document.querySelector('.action-btn').innerText = langData.withdraw;
-    
-    // ফার্মের বাটনগুলো আপডেট
-    document.querySelectorAll('.plot button').forEach(btn => {
-        btn.innerText = langData.buy;
-    });
-
-    // FAQ সেকশন আপডেট
-    document.getElementById('faqModal').querySelector('.modal-header').innerText = langData.earn_guide;
-    document.getElementById('faqModal').querySelector('div').innerHTML = `<p>${langData.faq_text}</p>`;
-
-    // সেশন সেভ করা (যাতে অ্যাপ কাটলে ভাষা না হারায়)
-    localStorage.setItem('selectedLanguage', selectedLang);
-}
-
-// ৩. অ্যাপ লোড হওয়ার সময় ভাষা চেক করা
-window.onload = () => {
-    const savedLang = localStorage.getItem('selectedLanguage') || 'en';
-    document.getElementById('langSelect').value = savedLang;
-    changeLang();
-};
-            
         </div>
-        <hr>
-        <div class="setting-item">
-            🎵 Music: <button onclick="toggleMusic()" id="musicBtn">OFF</button>
-        </div>
-        <hr>
-        <button class="action-btn" style="background: #2196f3; color: white;" onclick="openModal('faqModal')">FAQ / Help</button>
-    </div>
-
-    <div id="faqModal" class="modal">
-        <span class="close-btn" onclick="closeModal('faqModal')">✖</span>
-        <div class="modal-header">How to Earn</div>
-        <div style="font-size: 13px; max-height: 250px; overflow-y: auto;">
-            <p>1. <b>Deposit TON:</b> Unlock plots to start farming.</p>
-            <p>2. <b>24H Auto Cycle:</b> Each plan expires after 24 hours.</p>
-            <p>3. <b>Withdraw:</b> Go to wallet to withdraw your earnings instantly.</p>
-            <p>4. <b>Best Plan:</b> Coffee Gold (x35) gives the highest ROI.</p>
-        </div>
-    </div>
-
-    <div class="bottom-nav">
-        <div class="nav-icon active">🏠<br><small>Home</small></div>
-        <div class="nav-icon" onclick="openModal('walletModal')">💳<br><small>Wallet</small></div>
-        <div class="nav-icon" onclick="openModal('settingsModal')">⚙️<br><small>Settings</small></div>
+        <p>🎵 Music: <button onclick="toggleMusic()">ON/OFF</button></p>
+        <button onclick="closeModal('settingsModal')">Close</button>
     </div>
 
     <script>
-        // --- Configuration & Initialization ---
-        const firebaseConfig = { /* Your Config Here */ };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const tg = window.Telegram.WebApp;
-        const userId = tg.initDataUnsafe?.user?.id || "dev_user";
+        // --- Language Database ---
+        const langDict = {
+            en: { home: "Home", wallet: "Wallet", settings: "Settings", load: "Loading..." },
+            bd: { home: "হোম", wallet: "ওয়ালেট", settings: "সেটিংস", load: "লোড হচ্ছে..." },
+            ru: { home: "Главная", wallet: "Кошелек", settings: "Настройки", load: "Загрузка..." },
+            in: { home: "होम", wallet: "वॉलेट", settings: "सेटिंग्स", load: "लोड हो रहा है..." },
+            cn: { home: "首页", wallet: "钱包", settings: "设置", load: "加载中..." }
+        };
 
-        // TON Connect Setup
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/tonconnect-manifest.json',
-            buttonRootId: 'ton-connect-button'
-        });
-
-        // --- Plot Generation ---
-        const plotsData = [
-            { id: 1, cost: 5, multiplier: "x5", color: "#8d6e63" },
-            { id: 2, cost: 10, multiplier: "x10", color: "#6d4c41" },
-            { id: 3, cost: 20, multiplier: "x20", color: "#4e342e" },
-            { id: 4, cost: 35, multiplier: "x35", color: "#3e2723" }
-        ];
-
-        function renderPlots() {
-            const grid = document.getElementById('farmGrid');
-            plotsData.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'plot locked';
-                div.innerHTML = `<span>${p.multiplier}</span><br><small>${p.cost} TON</small>`;
-                div.onclick = () => unlockPlot(p);
-                grid.appendChild(div);
-            });
+        function applyLanguage() {
+            const lang = document.getElementById('langSelect').value;
+            const d = langDict[lang];
+            document.querySelector('.t-home').innerText = d.home;
+            document.querySelectorAll('.t-wallet').forEach(el => el.innerText = d.wallet);
+            document.querySelectorAll('.t-settings').forEach(el => el.innerText = d.settings);
+            document.getElementById('load-text').innerText = d.load;
         }
 
-        // --- Modal Logic ---
+        // --- Video Loader Logic ---
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 5;
+            document.getElementById('p-bar').style.width = progress + "%";
+            if(progress >= 100) {
+                clearInterval(interval);
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-game').style.display = 'block';
+            }
+        }, 150);
+
+        // --- Modal Control ---
         function openModal(id) { document.getElementById(id).style.display = 'block'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // --- Game Logic ---
-        async function unlockPlot(plot) {
-            if (!tonConnectUI.connected) return tg.showAlert("Please connect wallet first!");
-            
-            tg.showConfirm(`Unlock ${plot.multiplier} plot for ${plot.cost} TON?`, async (ok) => {
-                if(ok) {
-                    // Start 24H Auto Cycle Logic
-                    tg.showAlert("Plot Unlocked! Valid for 24 Hours.");
-                }
-            });
-        }
-
-        function processWithdraw() {
-            const amount = document.getElementById('withdrawAmount').value;
-            if(amount < 1) return tg.showAlert("Min withdraw 1 TON");
-            tg.showPopup({ title: "Withdrawal Sent", message: "Processing... Please check history soon." });
-        }
-
-        renderPlots();
+        // --- Initialize ---
+        window.onload = () => {
+            applyLanguage();
+            // Load Farm Plots
+            const grid = document.getElementById('garden');
+            for(let i=1; i<=9; i++) {
+                const plot = document.createElement('div');
+                plot.className = 'plot locked';
+                plot.innerHTML = `<span>x${i*5}</span>`;
+                grid.appendChild(plot);
+            }
+        };
     </script>
 </body>
 </html>

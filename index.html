@@ -13,9 +13,18 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100vh; font-family: 'Poppins', sans-serif; background: #000; color: white; overflow: hidden; }
         
-        /* Background & Overlay */
-        #main-bg {
+        /* --- Video Loading Screen --- */
+        #video-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center;
+        }
+        #video-loader video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Main App Container */
+        #app-content { display: none; height: 100vh; flex-direction: column; position: relative; }
+        
+        #main-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://i.postimg.cc/0jLnTqx9/1775464928626.png') center/cover;
             filter: brightness(0.8); z-index: -1;
         }
@@ -23,76 +32,88 @@
         .screen { display: none; height: 100vh; flex-direction: column; padding: 20px; box-sizing: border-box; }
         .active { display: flex; }
 
-        /* --- Farm Section --- */
-        .farm-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; overflow-y: auto; }
-        .farm-card { background: rgba(0,0,0,0.6); border: 2px solid #4caf50; border-radius: 15px; padding: 10px; text-align: center; }
-        .farm-card img { width: 80px; margin-bottom: 5px; }
-        .farm-card h4 { margin: 5px 0; color: #fbc02d; }
-
-        /* --- Team Section --- */
-        .team-box { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-top: 10px; text-align: center; }
-        .ref-link { background: #333; padding: 10px; border-radius: 5px; word-break: break-all; margin: 10px 0; font-size: 12px; }
-
         /* Bottom Nav */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-around; background: rgba(0,0,0,0.9); padding: 15px 0; border-top: 2px solid #4caf50; }
         .nav-item { text-align: center; font-size: 12px; cursor: pointer; opacity: 0.6; }
         .nav-item.active-nav { opacity: 1; color: #4caf50; }
+
+        /* Farm & Team Styles */
+        .farm-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; overflow-y: auto; }
+        .farm-card { background: rgba(0,0,0,0.6); border: 2px solid #4caf50; border-radius: 15px; padding: 10px; text-align: center; }
+        .team-box { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div id="main-bg"></div>
-
-    <div id="home-screen" class="screen active">
-        <div style="display: flex; justify-content: space-between;">
-            <div id="ton-connect-button"></div>
-            <div style="background: #8d6e63; padding: 5px 15px; border-radius: 20px; border: 2px solid #b8860b;">
-                💰 <span id="balance">0.0000</span>
-            </div>
-        </div>
-        <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
-             <img src="https://i.postimg.cc/0jLnTqx9/1775464928626.png" style="width: 250px;" onclick="mine()">
-        </div>
+    <div id="video-loader">
+        <video id="intro-video" autoplay muted playsinline>
+            <source src="1000004531.mp4" type="video/mp4">
+        </video>
     </div>
 
-    <div id="farm-screen" class="screen">
-        <h2 style="text-align: center; color: #4caf50;">Farm Shop</h2>
-        <div class="farm-grid">
-            <div class="farm-card">
-                <img src="https://i.ibb.co/VpXpZ6V/main-tree.png">
-                <h4>Small Tree</h4>
-                <p>0.5 TON</p>
-                <button onclick="buyPlot(0.5)" style="background: #4caf50; border: none; color: white; padding: 5px 15px; border-radius: 5px;">Buy</button>
+    <div id="app-content">
+        <div id="main-bg"></div>
+
+        <div id="home-screen" class="screen active">
+            <div style="display: flex; justify-content: space-between;">
+                <div id="ton-connect-button"></div>
+                <div style="background: #8d6e63; padding: 5px 15px; border-radius: 20px; border: 2px solid #b8860b;">
+                    💰 <span id="balance">0.0000</span>
+                </div>
             </div>
-            <div class="farm-card">
-                <img src="https://i.ibb.co/VpXpZ6V/main-tree.png">
-                <h4>Gold Crop</h4>
-                <p>2.0 TON</p>
-                <button onclick="buyPlot(2.0)" style="background: #4caf50; border: none; color: white; padding: 5px 15px; border-radius: 5px;">Buy</button>
+            <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                 <img src="https://i.postimg.cc/0jLnTqx9/1775464928626.png" style="width: 250px;" onclick="mine()">
             </div>
         </div>
-    </div>
 
-    <div id="team-screen" class="screen">
-        <h2 style="text-align: center;">Referral Program</h2>
-        <div class="team-box">
-            <p>Invite friends and earn 10% commission on their mining!</p>
-            <div class="ref-link" id="ref-url">https://t.me/your_bot?start=user123</div>
-            <button onclick="copyRef()" style="background: #2196f3; color: white; border: none; padding: 10px 20px; border-radius: 8px;">Copy Link</button>
+        <div id="farm-screen" class="screen">
+            <h2 style="text-align: center; color: #4caf50;">Farm Shop</h2>
+            <div class="farm-grid" id="farm-content">
+                <div class="farm-card">
+                    <img src="https://i.ibb.co/VpXpZ6V/main-tree.png" style="width: 60px;">
+                    <h4>Small Plot</h4>
+                    <p>0.5 TON</p>
+                    <button onclick="buyPlot(0.5)" style="background: #4caf50; border: none; color: white; border-radius: 5px;">Buy</button>
+                </div>
+            </div>
         </div>
-        <div style="margin-top: 20px;">
-            <h3>Your Team: <span id="team-count">0</span></h3>
-        </div>
-    </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active-nav" onclick="showScreen('home')">🏠<br>Home</div>
-        <div class="nav-item" onclick="showScreen('farm')">🚜<br>Farm</div>
-        <div class="nav-item" onclick="showScreen('team')">👥<br>Team</div>
+        <div id="team-screen" class="screen">
+            <h2 style="text-align: center;">Team & Refer</h2>
+            <div class="team-box">
+                <p>Invite friends to earn commissions!</p>
+                <div id="ref-url" style="background: #333; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 11px;">https://t.me/your_bot?start=userid</div>
+                <button onclick="copyRef()" style="background: #2196f3; color: white; border: none; padding: 8px 15px; border-radius: 5px;">Copy Link</button>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active-nav" onclick="showScreen('home')">🏠<br>Home</div>
+            <div class="nav-item" onclick="showScreen('farm')">🚜<br>Farm</div>
+            <div class="nav-item" onclick="showScreen('team')">👥<br>Team</div>
+        </div>
     </div>
 
     <script>
-        // --- 1. Firebase Initialize ---
+        // --- Video to Main Page logic ---
+        const video = document.getElementById('intro-video');
+        const loader = document.getElementById('video-loader');
+        const app = document.getElementById('app-content');
+
+        video.onended = function() {
+            loader.style.display = 'none';
+            app.style.display = 'flex';
+        };
+
+        // Fail-safe: Video load na hole 5 sec por auto start
+        setTimeout(() => {
+            if(loader.style.display !== 'none') {
+                loader.style.display = 'none';
+                app.style.display = 'flex';
+            }
+        }, 6000);
+
+        // --- Firebase & TON logic ---
         const firebaseConfig = {
             apiKey: "AIzaSyDYaSQbU380U6hcUmBgkDr4WAEmEu45X_U",
             authDomain: "tonnow-pro.firebaseapp.com",
@@ -105,31 +126,28 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const tg = window.Telegram.WebApp;
+        const userId = tg.initDataUnsafe?.user?.id || "test_user";
 
-        // --- 2. Screen Navigation ---
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-            
-            document.getElementById(screenId + '-screen').classList.add('active');
-            event.currentTarget.classList.add('active-nav');
-        }
-
-        // --- 3. TON Connect ---
+        // TON Connect
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-button'
         });
 
-        // --- 4. Mining & DB ---
-        let balance = 0;
-        const tg = window.Telegram.WebApp;
-        const userId = tg.initDataUnsafe?.user?.id || "test_user";
+        // Navigation
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+            document.getElementById(screenId + '-screen').classList.add('active');
+            event.currentTarget.classList.add('active-nav');
+        }
 
+        // Mining
+        let balance = 0;
         db.ref('users/' + userId).on('value', (snapshot) => {
-            const data = snapshot.val();
-            if(data) {
-                balance = data.balance || 0;
+            if(snapshot.val()) {
+                balance = snapshot.val().balance || 0;
                 document.getElementById('balance').innerText = balance.toFixed(4);
             }
         });
@@ -140,13 +158,8 @@
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        function buyPlot(price) {
-            alert("Redirecting to TON Wallet for " + price + " TON...");
-        }
-
         function copyRef() {
-            const link = document.getElementById('ref-url').innerText;
-            navigator.clipboard.writeText(link);
+            navigator.clipboard.writeText(document.getElementById('ref-url').innerText);
             tg.showAlert("Link Copied!");
         }
     </script>

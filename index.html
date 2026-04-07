@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Plant-TON App Pro</title>
+    <title>Plan-Ton App Pro</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -12,455 +12,360 @@
     <script src="https://adsgram.ai/js-sdk/direct-ads.js"></script>
 
     <style>
-        /* === CORE THEME & PREMIUM STYLING === */
-        :root { --p: #4caf50; --s: #8d6e63; --gold: #ffd700; --bg: #0a0705; --card: #1f140e; }
-        body, html { margin: 0; padding: 0; height: 100vh; width: 100vw; background: #000; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden; user-select: none; }
+        /* === ডার্ক প্রিমিয়াম ও ফুল মুন ডিজাইন === */
+        :root { --gold: #ffd700; --bg-dark: #0a0705; --wood: #8d6e63; }
         
-        /* 1. Video Loader Fix (Black Screen Protection) */
-        #loader { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; align-items: center; justify-content: center; flex-direction: column; display: flex; /* Visible by default */ }
-        #loader video { width: 100%; height: 100%; object-fit: cover; }
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
+            overflow-x: hidden; overflow-y: auto; background-color: #000;
+        }
 
-        /* Spinner inside loader */
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
+        /* Full Moon Background */
+        .moon-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=1080') no-repeat center center;
+            background-size: cover; z-index: -1;
+        }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: -1; }
+
+        /* 3 Second Loading Screen */
+        #loader { 
+            position: fixed; inset: 0; z-index: 99999; background: #000; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            transition: opacity 0.5s ease;
+        }
+        .moon-loader-img { width: 180px; height: 180px; border-radius: 50%; box-shadow: 0 0 50px rgba(255,255,255,0.6); margin-bottom: 30px; object-fit: cover; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,215,0,0.2); border-top: 4px solid var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* 2. Main App Container */
-        #app { display: none; height: 100vh; width: 100vw; background: url('https://i.postimg.cc/0jLnTqx9/1775464928626.png') center/cover no-repeat; position: relative; display: none; flex-direction: column; }
-        .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 0; }
-        .content-wrapper { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; }
-
-        /* Header Area */
-        .header { display: flex; justify-content: space-between; padding: 10px 15px; background: rgba(0,0,0,0.8); align-items: center; border-bottom: 2px solid var(--p); }
-        .stat-badge { background: var(--s); border: 2px solid var(--gold); padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .header-actions { display: flex; gap: 10px; align-items: center; }
-        .icon-btn { font-size: 24px; cursor: pointer; background: rgba(255,255,255,0.1); padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-
-        /* TOP Navigation (No bottom nav) */
-        .top-nav { display: flex; justify-content: space-around; background: rgba(62, 39, 35, 0.95); padding: 12px 5px; border-bottom: 2px solid var(--s); }
-        .nav-item { text-align: center; font-size: 13px; font-weight: bold; color: #bbb; cursor: pointer; padding: 5px 10px; border-radius: 10px; transition: 0.3s; }
-        .nav-item.active { color: var(--gold); background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 10px rgba(251, 192, 45, 0.2); }
-
-        /* Views Container */
-        .view-section { flex: 1; overflow-y: auto; padding: 15px; display: none; padding-bottom: 30px; }
-        .view-section.active { display: block; }
-
-        /* Farm Grid */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-        .plot { height: 125px; background: rgba(139, 69, 19, 0.9); border: 2px solid #5d4037; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.5); position: relative; }
+        /* Main App Area */
+        #app { display: none; min-height: 100vh; flex-direction: column; position: relative; padding-bottom: 30px; }
         
-        /* Farm Item States (small icon -> breathe -> big icon) */
-        .item-icon-container { font-size: 30px; margin-bottom: 5px; text-shadow: 2px 2px 4px #000; animation: breathe 2s infinite; }
-        .plot b { font-size: 13px; color: var(--gold); text-shadow: 1px 1px 2px #000; margin-bottom: 5px; }
-        .plot.ready .item-icon-container { font-size: 55px; filter: drop-shadow(0 0 15px rgba(255,215,0,0.8)); animation: none; transition: 0.5s; }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-        
-        .timer { font-size: 11px; color: #ff9800; font-family: monospace; font-weight: bold; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 5px; margin-bottom: 5px; }
-        .plot.locked::after { content: '🔒'; font-size: 20px; position: absolute; bottom: 8px; opacity: 0.8; }
-        
-        /* Modals & Buttons */
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 400px; background: #edc9a1; border: 5px solid var(--s); border-radius: 25px; padding: 20px; z-index: 10000; color: #2c1b0e; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .modal-h { font-size: 20px; font-weight: bold; text-align: center; border-bottom: 2px solid var(--s); margin-bottom: 15px; padding-bottom: 8px; }
-        .btn { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 12px; font-weight: bold; color: #fff; cursor: pointer; font-size: 14px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; box-shadow: 0 4px #333; }
-        .btn:active { transform: translateY(2px); box-shadow: 0 2px #333; }
-        .p-btn { background: #4caf50; } .t-btn { background: #2196f3; } .r-btn { background: #ff9800; } .c-btn { background: #f44336; justify-content: center; }
-        
-        /* Glow animation for Ready to claim profit */
-        @keyframes glow { from { box-shadow: 0 0 5px var(--gold); } to { box-shadow: 0 0 20px var(--gold); } }
-        .plot.ready { animation: glow 1.5s infinite alternate; }
+        /* Top Header */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--gold); backdrop-filter: blur(10px); }
+        .balance-box { background: rgba(255,215,0,0.15); border: 1.5px solid var(--gold); padding: 8px 15px; border-radius: 30px; font-weight: bold; font-size: 16px; color: var(--gold); display:flex; align-items:center; gap:8px;}
+        .settings-btn { font-size: 24px; background: none; border: none; color: #fff; cursor: pointer; transition: 0.3s; }
 
-        /* Task & Frens Cards */
-        .card { background: rgba(0,0,0,0.7); border: 1px solid var(--s); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
-        .card-t { margin: 0 0 5px 0; color: #fff; font-size: 16px; }
-        .card-desc { margin: 0; color: var(--gold); font-size: 14px; font-weight: bold; }
+        /* Dashboard Buttons (No Bottom Menu) */
+        .dashboard-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: rgba(0,0,0,0.5); margin: 10px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .dash-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--wood); padding: 12px 5px; border-radius: 12px; color: #fff; font-size: 12px; font-weight: bold; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.2s; }
+        .dash-btn:active { background: var(--gold); color: #000; border-color: var(--gold); }
+        .dash-btn i { font-size: 22px; }
 
-        /* Wallet view with ads limit */
-        .ads-counter { font-size: 12px; color: #d32f2f; font-weight: bold; text-align: center; }
-        .ads-target { background: #3e2723; padding: 15px; border-radius: 15px; margin: 20px 0; border: 1px solid #ff9800; }
-        .input-box { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--s); background: #111; color: #fff; font-size: 15px; font-weight: bold; text-align: center; }
+        /* 10 Slot Farm Grid */
+        .farm-container { padding: 15px; }
+        .farm-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .plot { 
+            background: rgba(30, 20, 15, 0.9); border: 3px solid var(--wood); border-radius: 15px; 
+            height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            position: relative; box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+        .plot.locked { border-color: #333; background: rgba(15,15,15,0.95); }
+        .plot.ready { border-color: var(--gold); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 5px var(--gold); } 50% { box-shadow: 0 0 20px var(--gold); } 100% { box-shadow: 0 0 5px var(--gold); } }
+        
+        .icon-large { font-size: 55px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+        .action-btn { background: var(--gold); color: #000; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; margin-top: 10px; width: 85%; cursor: pointer; }
+
+        /* Modals */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: #111; border: 2px solid var(--gold); width: 100%; max-width: 400px; border-radius: 20px; padding: 25px; text-align: center; position: relative; }
+        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; background: none; border: none; color: red; cursor: pointer; }
+
+        .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .lang-btn { background: #222; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 13px; }
+        .lang-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+        
+        input[type="number"] { width: 85%; padding: 15px; border-radius: 10px; border: 2px solid var(--wood); background: #222; color: #fff; text-align: center; font-size: 18px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <audio id="bgMusic" loop src="https://www.bensound.com/bensound-music/bensound-epic.mp3"></audio>
+    <div class="moon-bg"></div>
+    <div class="overlay"></div>
+    <audio id="bgMusic" loop src="https://www.bensound.com/bensound-music/bensound-relaxing.mp3"></audio>
 
     <div id="loader">
-        <video id="intro-vid" autoplay muted playsinline>
-            <source src="https://telegram-plan-ton-pro-bot.vercel.app/VID_20260406_150234_927.mp4" type="video/mp4">
-        </video>
-        <div class="spinner" style="position:absolute; bottom:20px;"></div>
+        <img src="https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=500" class="moon-loader-img" alt="Moon">
+        <div class="spinner"></div>
+        <h2 style="color:var(--gold); margin-top:20px; font-weight:bold; letter-spacing: 1px;" id="t-loading">Loading Universe...</h2>
     </div>
 
     <div id="app">
-        <div class="overlay"></div>
-        <div class="content-wrapper">
+        
+        <div class="header">
+            <div class="balance-box">💎 <span id="ui-bal">0.000</span></div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div id="ton-connect-header"></div> <button class="settings-btn" onclick="openModal('settingsModal')">⚙️</button>
+            </div>
+        </div>
+
+        <div class="dashboard-menu">
+            <div class="dash-btn" onclick="openModal('withdrawModal')"><i style="color:#4caf50">💸</i> <span id="t-withdraw">Withdraw</span></div>
+            <div class="dash-btn" onclick="openModal('tasksModal')"><i style="color:#2196f3">📋</i> <span id="t-tasks">Tasks</span></div>
+            <div class="dash-btn" onclick="watchAd()"><i style="color:#ff9800">📺</i> <span id="t-ads">Ads (<span id="ui-ads">0</span>)</span></div>
+            <div class="dash-btn" onclick="copyRef()"><i style="color:#e91e63">👥</i> <span id="t-ref">Refer</span></div>
+        </div>
+
+        <div class="farm-container">
+            <h3 style="text-align:center; color:var(--gold); margin-bottom:15px; font-size:22px; border-bottom: 1px solid var(--wood); padding-bottom:10px;" id="t-farm-title">YOUR LUNAR FARM</h3>
+            <div class="farm-grid" id="farm-grid">
+                </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('settingsModal')">✖</button>
+            <h2 id="t-set-title" style="color:var(--gold);">Settings</h2>
             
-            <div class="header">
-                <div class="stat-badge">💎 <span id="main-balance">0.0000</span> TON</div>
-                <div class="header-actions">
-                    <div id="ton-connect-button" style="transform: scale(0.8); transform-origin: right;"></div>
-                    <div class="icon-btn" onclick="openModal('settings-modal')">⚙️</div>
-                </div>
+            <button class="action-btn" id="musicBtn" onclick="toggleMusic()" style="width:100%; margin:20px 0; font-size:16px;">🔊 Music: OFF</button>
+            
+            <h4 style="margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:5px;">Select Language</h4>
+            <div class="lang-grid">
+                <button class="lang-btn" onclick="changeLang('bn')">🇧🇩 Bangla</button>
+                <button class="lang-btn active" onclick="changeLang('en')">🇺🇸 English</button>
+                <button class="lang-btn" onclick="changeLang('ru')">🇷🇺 Russian</button>
+                <button class="lang-btn" onclick="changeLang('hi')">🇮🇳 Hindi</button>
+                <button class="lang-btn" onclick="changeLang('ja')">🇯🇵 Japan</button>
+                <button class="lang-btn" onclick="changeLang('de')">🇩🇪 Germany</button>
             </div>
-
-            <div class="top-nav">
-                <div class="nav-item active" onclick="switchView('view-home')">🏠 Farm</div>
-                <div class="nav-item" onclick="switchView('view-tasks')">📋 Tasks</div>
-                <div class="nav-item" onclick="switchView('view-frens')">👥 Frens</div>
-                <div class="nav-item" onclick="switchView('view-wallet')">💳 Wallet</div>
-            </div>
-
-            <div id="view-home" class="view-section active">
-                <div class="grid" id="farm-grid">
-                    </div>
-            </div>
-
-            <div id="view-tasks" class="view-section">
-                <h2 style="text-align:center;">Daily Tasks</h2>
-                <div class="card">
-                    <div class="card-t">Join Telegram Channel</div>
-                    <p class="card-desc">+0.5 TON Profit Boost</p>
-                    <button class="btn" onclick="doDemoTask(this)">Start</button>
-                </div>
-                <div class="card">
-                    <div class="card-t">Subscribe YouTube</div>
-                    <p class="card-desc">+0.2 TON</p>
-                    <button class="btn" onclick="doDemoTask(this)">Start</button>
-                </div>
-            </div>
-
-            <div id="view-frens" class="view-section">
-                <h2 style="text-align:center;">Invite Friends</h2>
-                <button class="invite-btn btn r-btn" style="justify-content:center; margin-top:20px;" onclick="copyReferralLink()">🎁 Invite a Friend</button>
-                
-                <div class="card" style="margin-top:20px;">
-                    <div class="card-t">Your Friends (<span id="friends-count">0</span>)</div>
-                    <div id="friends-list" style="color: #aaa; text-align:center;">No friends yet.</div>
-                </div>
-            </div>
-
-            <div id="view-wallet" class="view-section">
-                <div class="wallet-card card">
-                    <h2 style="color:var(--gold); margin-top:0;">Withdraw Funds</h2>
-                    <p style="font-size:18px;">Balance: <b id="wallet-balance">0.0000</b> TON</p>
-                    
-                    <div class="ads-target">
-                        <h3 style="color:#ff9800; margin-top:0;">Adsgram Watch Limit</h3>
-                        <p class="ads-counter">Watched: <span id="wallet-ads-count">0</span> / 10</p>
-                        <p style="font-size:12px; color:#ccc; margin-bottom:15px;">Watch 10 ads to enable withdrawal to TON wallet.</p>
-                        <button class="btn t-btn" style="justify-content:center;" onclick="watchDemoAd()">📺 Watch Ad (+1)</button>
-                    </div>
-
-                    <input type="number" id="withdraw-amt" class="input-box" placeholder="Amount (Min 1 TON)">
-                    <button class="btn btn-claim btn-glow" style="justify-content:center; margin-top:15px;" onclick="processWithdraw()">💸 Withdraw Money</button>
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <div id="unlock-modal" class="modal">
-        <span class="modal-close" onclick="closeModal('unlock-modal')" style="position:absolute; right:15px; top:10px; cursor:pointer;">✖</span>
-        <div class="modal-h" id="unlock-title">Unlock Plot</div>
-        <p style="text-align:center; font-size:14px; margin-bottom:15px;">Choose how to unlock this item for 24h profit:</p>
-        
-        <button class="btn p-btn" onclick="processUnlock('pay')">
-            <span>Pay with TON</span> <span id="unlock-ton-cost">0.0</span>
-        </button>
-        <button class="btn t-btn" onclick="processUnlock('task')">
-            <span>Complete Tasks</span> <span id="unlock-task-count">0/5</span>
-        </button>
-        <button class="btn r-btn" onclick="processUnlock('ref')">
-            <span>Invite Frens</span> <span id="unlock-ref-count">0/10</span>
-        </button>
-        
-        <button class="btn c-btn" style="margin-top:20px;" onclick="closeModal('unlock-modal')">Cancel</button>
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('withdrawModal')">✖</button>
+            <h2 style="color:var(--gold);" id="t-w-title">Withdraw TON</h2>
+            
+            <div id="w-status-box" style="padding:15px; border-radius:10px; margin-bottom:15px; font-weight:bold; display:none; border:1px solid;"></div>
+
+            <p style="color:#aaa; font-size:13px; margin-bottom:10px;">Ensure your wallet is connected above!</p>
+            <input type="number" id="w-amt" placeholder="Enter Amount">
+            <button class="action-btn" style="width:85%; font-size:16px;" onclick="requestWithdraw()">Confirm Request</button>
+            <p style="color:#ff9800; font-size:12px; margin-top:15px;">*Min 10 Ads required for withdrawal.</p>
+        </div>
     </div>
 
-    <div id="settings-modal" class="modal">
-        <div class="modal-h">Settings</div>
-        <p style="font-weight:bold; color: var(--gold); margin:0 0 10px 0;">Your ID: <span id="user-display-id">...</span></p>
-        
-        <p><b>Language Selection:</b></p>
-        <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
-            <button class="btn active-lang" onclick="tg.showAlert('En')">English</button>
-            <button class="btn" onclick="tg.showAlert('Bn')">বাংলা</button>
-            <button class="btn" onclick="tg.showAlert('Ru')">Русский</button>
+    <div id="tasksModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('tasksModal')">✖</button>
+            <h2 style="color:var(--gold);">Daily Tasks</h2>
+            <div style="background:#1a1a1a; padding:15px; border-radius:12px; border:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:bold;">Join Official Channel</span>
+                <button class="action-btn" style="width:auto; margin:0;" onclick="tg.openTelegramLink('https://t.me/telegram')">Go</button>
+            </div>
         </div>
-        
-        <p><b>Sound & Music:</b></p>
-        <button class="btn r-btn" style="justify-content:center; margin-bottom:10px;" id="music-btn" onclick="toggleBackgroundMusic()">Music: OFF 🔇</button>
-
-        <button class="btn" style="background:red; justify-content:center; margin-bottom:10px;" onclick="cheatTime()">🛠 Dev Mode: Fast Forward 24h</button>
-
-        <button class="btn c-btn" style="margin-top:20px;" onclick="closeModal('settings-modal')">Save & Close</button>
     </div>
 
     <script>
-        // --- TELEGRAM INIT & GLOBAL VARS ---
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
-        const uid = tg.initDataUnsafe?.user?.id || "dev_user_test";
-        document.getElementById('user-display-id').innerText = uid;
+        // 1. GUARANTEED 3-SECOND LOADER (সবার আগে লোডার ফিক্স)
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                const app = document.getElementById('app');
+                if(loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => { 
+                        loader.style.display = 'none'; 
+                        app.style.display = 'flex'; 
+                    }, 500);
+                }
+            }, 3000); // ঠিক ৩ সেকেন্ড পর ওপেন হবেই
+        });
 
-        // Firebase Config (Preserve existing config)
+        // 2. Telegram Init
+        let tg, uid = "dev_user";
+        try {
+            tg = window.Telegram.WebApp;
+            tg.expand();
+            uid = tg.initDataUnsafe?.user?.id || "dev_user";
+        } catch(e) { console.log("Not in Telegram"); }
+
+        // 3. SAFE Firebase Init
         const firebaseConfig = { apiKey: "AIzaSyDYaSQbU380U6hcUmBgkDr4WAEmEu45X_U", databaseURL: "https://tonnow-pro-default-rtdb.firebaseio.com", projectId: "tonnow-pro" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // SDKs
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({ manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/tonconnect-manifest.json', buttonRootId: 'ton-connect-button' });
-        const AdController = window.Adsgram.init({ blockId: "2627" }); // Real Ads Block ID
+        // 4. SAFE SDK Init (Ton & Adsgram)
+        let tonConnectUI = null;
+        try {
+            // Header এ টার্গেট দিয়েছি যাতে এরর না খায়
+            tonConnectUI = new TON_CONNECT_UI.TonConnectUI({ 
+                manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/tonconnect-manifest.json', 
+                buttonRootId: 'ton-connect-header' 
+            });
+        } catch(e) { console.log("TON UI Error"); }
 
-        // App States
-        let userData = { balance: 10.0, adsCount: 0, plots: {}, musicEnabled: false }; // Added free 10 TON for testing
-        let timerIntervals = {};
-        let selectedPlotId = null;
+        let AdController = null;
+        if(window.Adsgram) { AdController = window.Adsgram.init({ blockId: "2627" }); }
 
-        // --- LOADER FIX (Fixed Loading sequence) ---
-        const vid = document.getElementById('intro-vid');
-        const showMainScreen = () => {
-            document.getElementById('loader').style.display = 'none';
-            document.getElementById('app').style.display = 'flex';
+        // 5. Global State
+        let uData = { bal: 0, ads: 0, wStatus: '', farm: {}, lang: 'en', music: false };
+        let prevStatus = ''; 
+
+        // Language Config
+        const dict = {
+            'en': { load: "Loading Universe...", w: "Withdraw", t: "Tasks", a: "Ads", r: "Refer", fTitle: "YOUR LUNAR FARM", lock: "Locked", buy: "Buy", grow: "Growing", claim: "Claim" },
+            'bn': { load: "লোডিং হচ্ছে...", w: "উইথড্র", t: "টাস্ক", a: "অ্যাড", r: "রেফার", fTitle: "আপনার খামার", lock: "লকড", buy: "কিনুন", grow: "বড় হচ্ছে", claim: "সংগ্রহ" },
+            'ru': { load: "Загрузка...", w: "Вывод", t: "Задачи", a: "Реклама", r: "Рефералы", fTitle: "Ваша ферма", lock: "Закрыто", buy: "Купить", grow: "Растет", claim: "Собрать" },
+            'hi': { load: "लोड हो रहा है...", w: "निकालना", t: "कार्य", a: "विज्ञापन", r: "रेफर", fTitle: "आपका खेत", lock: "बंद है", buy: "खरीदें", grow: "बढ़ रहा है", claim: "दावा करें" },
+            'ja': { load: "ロード中...", w: "撤退", t: "タスク", a: "広告", r: "参照", fTitle: "あなたの農場", lock: "ロック", buy: "買う", grow: "成長中", claim: "請求" },
+            'de': { load: "Laden...", w: "Auszahlen", t: "Aufgaben", a: "Anzeigen", r: "Verweisen", fTitle: "Deine Farm", lock: "Gesperrt", buy: "Kaufen", grow: "Wachsen", claim: "Sammeln" }
         };
-        vid.onended = showMainScreen;
-        vid.onerror = showMainScreen; // If video fails, app shows
-        setTimeout(showMainScreen, 4000); // 4 seconds fail-safe protection
 
-        // --- FARM DATA & RENDER (6 Items) ---
-        // timeMs is 24 * 60 * 60 * 1000 (Hrs * 60 * 60 * 1000)
-        const farmItems = [
-            {id:1, n:"Potato (আলু)", i:"🥔", c:0.5, p:0.7, tMs: 24 * 3600000}, // 24h
-            {id:2, n:"Mango (আম)", i:"🥭", c:1.0, p:1.5, tMs: 24 * 3600000}, // 24h
-            {id:3, n:"Jackfruit (কাঁঠাল)", i:"🍈", c:2.0, p:3.2, tMs: 14 * 3600000}, // 14h
-            {id:4, n:"Papaya (পেঁপে)", i:"🍉", c:5.0, p:7.5, tMs: 14 * 3600000}, // 14h
-            {id:5, n:"Carrot (গাজর)", i:"🥕", c:10.0, p:15.0, tMs: 12 * 3600000}, // 12h
-            {id:6, n:"Eggplant (বেগুন)", i:"🍆", c:20.0, p:32.0, tMs: 12 * 3600000} // 12h
-        ];
+        // 6. DB Sync & Bot SMS Alerts
+        db.ref('users/' + uid).on('value', snap => {
+            const val = snap.val();
+            if(val) {
+                uData = val;
+                document.getElementById('ui-bal').innerText = (uData.bal || 0).toFixed(3);
+                document.getElementById('ui-ads').innerText = uData.ads || 0;
+                
+                // === BOT SMS SYSTEM ===
+                if(prevStatus === 'pending' && uData.wStatus === 'approved') {
+                    if(tg && tg.showAlert) tg.showAlert("✅ Admin Approved Your Withdraw! Please check your wallet.");
+                } else if (prevStatus === 'pending' && uData.wStatus === 'rejected') {
+                    if(tg && tg.showAlert) tg.showAlert("❌ Admin Rejected Your Withdraw! Contact support.");
+                }
+                prevStatus = uData.wStatus; 
 
-        function renderFarmGrid() {
+                updateWithdrawUI(uData.wStatus);
+                renderFarm();
+                if(uData.lang) updateLangText(uData.lang);
+            } else {
+                db.ref('users/' + uid).set({ bal: 5, ads: 0, wStatus: '', farm: {}, lang: 'en' });
+            }
+        });
+
+        // 7. 10 Slot Farming System
+        const COST = 2; // Unlock Cost
+        const PROFIT = 5; // Reward
+        const GROW_TIME = 24 * 3600000; // 24 Hours
+
+        function renderFarm() {
             const grid = document.getElementById('farm-grid');
             grid.innerHTML = '';
-            farmItems.forEach(item => {
+            const l = uData.lang || 'en';
+            
+            for(let i=1; i<=10; i++) {
+                const sID = 'slot_' + i;
+                const sData = uData.farm?.[sID];
                 const div = document.createElement('div');
-                div.className = 'plot locked'; // Default locked state
-                div.id = 'farm-plot-' + item.id;
-                
-                // Get name based on language (Not full implemented for this code, kept existing names)
-                const cName = item.n;
+                div.className = 'plot';
 
-                // Sync from DB state
-                const userPlot = userData.plots ? userData.plots[item.id] : null;
-
-                if (!userPlot) {
-                    // STATE 1: LOCKED (Buy for TON, Task or Refer)
-                    div.innerHTML = `
-                        <div class="item-icon-container" style="opacity:0.3;">${item.i}</div>
-                        <b>${cName}</b>
-                        <small style="color:#eee;">Cost: ${item.c} TON</small>
-                        <small style="color:var(--gold);">Profit: ${item.p} TON</small>
-                    `;
-                    div.onclick = () => openUnlockModal(item);
+                if(!sData) {
+                    div.classList.add('locked');
+                    div.innerHTML = `<div class="icon-large">🔒</div>
+                                     <div style="color:#888; margin-top:8px;">${dict[l].lock}</div>
+                                     <button class="action-btn" onclick="buyPlot('${sID}')">${dict[l].buy} ${COST}T</button>`;
                 } else {
-                    const now = Date.now();
-                    if (now < userPlot.endTime) {
-                        // STATE 2: GROWING (small icon, breathe animation, timer)
-                        div.innerHTML = `
-                            <div class="item-icon-container breathe">${item.i}</div>
-                            <b>${cName}</b>
-                            <div class="timer" id="timer-${item.id}">00:00:00</div>
-                        `;
-                        div.classList.remove('locked');
-                        startTimer(item.id, userPlot.endTime);
+                    const timeLeft = sData.end - Date.now();
+                    if(timeLeft > 0) {
+                        div.innerHTML = `<div class="icon-large">🌱</div>
+                                         <div style="color:var(--gold); font-weight:bold; margin-top:8px;">${dict[l].grow}</div>
+                                         <div id="t-${sID}" style="font-family:monospace; margin-top:5px; font-size:16px;">--:--:--</div>`;
+                        runTimer(sID, sData.end);
                     } else {
-                        // STATE 3: READY (big icon, claim button, glowing animation)
-                        div.innerHTML = `
-                            <div class="item-icon-container">${item.i}</div>
-                            <b>${cName}</b>
-                            <div class="plot-profit" style="color:#4caf50;">Ready to harvest!</div>
-                            <button class="btn btn-claim" style="justify-content:center;" onclick="claimProfit(${item.id})">Claim Profit (${item.p})</button>
-                        `;
-                        div.classList.remove('locked');
                         div.classList.add('ready');
+                        div.innerHTML = `<div class="icon-large">🌳🍎</div>
+                                         <button class="action-btn" onclick="claimPlot('${sID}')">${dict[l].claim} +${PROFIT}</button>`;
                     }
                 }
                 grid.appendChild(div);
-            });
+            }
         }
 
-        // --- TIMER & UNLOCK LOGIC ---
-        function startTimer(id, endTime) {
-            // Clear existing timer if any
-            if(timerIntervals[id]) clearInterval(timerIntervals[id]);
-            
-            timerIntervals[id] = setInterval(() => {
-                const now = Date.now();
-                const diff = endTime - now;
-                const timerEl = document.getElementById(`timer-${id}`);
-                
-                if (diff <= 0) {
-                    clearInterval(timerIntervals[id]);
-                    renderFarmGrid(); // Auto refresh to Ready state
-                } else if(timerEl) {
-                    const hrs = Math.floor(diff / (1000 * 60 * 60));
-                    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    const secs = Math.floor((diff % (1000 * 60)) / 1000);
-                    timerEl.innerText = `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        function runTimer(id, endTime) {
+            const intv = setInterval(() => {
+                const diff = endTime - Date.now();
+                const el = document.getElementById('t-'+id);
+                if(diff <= 0 || !el) { clearInterval(intv); renderFarm(); }
+                else {
+                    const h = String(Math.floor(diff/3600000)).padStart(2, '0');
+                    const m = String(Math.floor((diff%3600000)/60000)).padStart(2, '0');
+                    const s = String(Math.floor((diff%60000)/1000)).padStart(2, '0');
+                    el.innerText = `${h}:${m}:${s}`;
                 }
             }, 1000);
         }
 
-        function openUnlockModal(item) {
-            selectedPlotId = item.id;
-            document.getElementById('unlock-title').innerText = "Unlock " + item.n;
-            document.getElementById('unlock-ton-cost').innerText = item.c + " TON";
-            // Demo requirements, needs real DB syncing to check
-            document.getElementById('unlock-task-count').innerText = "0/5"; 
-            document.getElementById('unlock-ref-count').innerText = "0/10";
-            openModal('unlock-modal');
+        function buyPlot(id) {
+            if(uData.bal >= COST) {
+                db.ref('users/'+uid).update({ bal: uData.bal - COST });
+                db.ref('users/'+uid+'/farm/'+id).set({ end: Date.now() + GROW_TIME });
+            } else { if(tg && tg.showAlert) tg.showAlert("Insufficient TON!"); }
         }
 
-        async function processUnlock(method) {
-            const item = farmItems.find(x => x.id === selectedPlotId);
-            
-            if (method === 'pay') {
-                if (!tonConnectUI.connected) return tg.showAlert("Please connect your TON wallet first!");
-                const transaction = { validUntil: Date.now()+60, messages: [{ address: "YOUR_WALLET_ADDRESS", amount: (item.c * 1e9).toString() }] };
-                try {
-                    await tonConnectUI.sendTransaction(transaction);
-                    unlockSuccess();
-                } catch(e) { tg.showAlert("Payment cancelled or failed."); }
-            } 
-            else {
-                tg.showAlert("Requirement not met! Complete demo tasks or invite friends.");
+        function claimPlot(id) {
+            db.ref('users/'+uid).update({ bal: uData.bal + PROFIT });
+            db.ref('users/'+uid+'/farm/'+id).remove(); 
+        }
+
+        // 8. Withdraw System
+        function requestWithdraw() {
+            const amt = document.getElementById('w-amt').value;
+            if(tonConnectUI && !tonConnectUI.connected) {
+                if(tg && tg.showAlert) tg.showAlert("Connect wallet from top header first!");
+                return;
             }
-        }
-
-        function unlockSuccess() {
-            const item = farmItems.find(x => x.id === selectedPlotId);
-            const endTime = Date.now() + item.tMs;
+            if(uData.ads < 10) return tg.showAlert ? tg.showAlert("Watch 10 Ads first!") : alert("Watch 10 Ads first!");
+            if(amt < 1 || amt > uData.bal) return tg.showAlert ? tg.showAlert("Invalid Amount!") : alert("Invalid Amount!");
             
-            // Deduct TON cost from balance (demo logic)
-            userData.balance -= item.c;
-            db.ref('users/'+uid).update({ balance: userData.balance });
-
-            // Store in Firebase
-            db.ref('users/' + uid + '/plots/' + selectedPlotId).set({ active: true, startTime: Date.now(), endTime: endTime });
-            
-            closeModal('unlock-modal');
-            tg.showAlert("Successfully Unlocked! Growing for 24 hours.");
-            tg.HapticFeedback.impactOccurred('medium');
-            location.reload(); // Refresh to update visuals
+            db.ref('users/'+uid).update({ wStatus: 'pending', wAmt: amt });
+            if(tg && tg.showAlert) tg.showAlert("Request Sent! Admin will verify soon.");
+            closeModal('withdrawModal');
         }
 
-        function claimProfit(plotId) {
-            const item = farmItems.find(x => x.id === plotId);
-            userData.balance += item.p; // Add profit to balance
-            db.ref('users/'+uid).update({ balance: userData.balance });
-            db.ref('users/'+uid+'/plots/'+plotId).remove(); // Reset plot
-            tg.showAlert(`Claimed ${item.p} TON from ${item.n} harvest!`);
-            tg.HapticFeedback.impactOccurred('heavy');
-            // location.reload(); // Refresh to update visuals
+        function updateWithdrawUI(status) {
+            const box = document.getElementById('w-status-box');
+            if(!status) { box.style.display = 'none'; return; }
+            box.style.display = 'block';
+            if(status === 'pending') { box.style.background = '#ff980033'; box.style.color = '#ff9800'; box.style.borderColor = '#ff9800'; box.innerHTML = "⏳ Status: Pending Admin Approval"; }
+            else if(status === 'approved') { box.style.background = '#4caf5033'; box.style.color = '#4caf50'; box.style.borderColor = '#4caf50'; box.innerHTML = "✅ Status: Withdraw Approved!"; }
+            else if(status === 'rejected') { box.style.background = '#f4433633'; box.style.color = '#f44336'; box.style.borderColor = '#f44336'; box.innerHTML = "❌ Status: Withdraw Rejected!"; }
         }
 
-        // --- ADS, WALLET & EXTRAS LOGIC ---
-        async function watchDemoAd() {
-            try {
-                await AdController.show();
-                userData.adsCount++;
-                db.ref('users/'+uid).update({ adsCount: userData.adsCount });
-                tg.showAlert("Demo Ad Watched Successfully! Count: " + userData.adsCount + "/10");
-            } catch(e) {
-                tg.showAlert("Fail to load Ad. Try again.");
-            }
+        // 9. Extra Features (Ads, Refer, Language, Music)
+        async function watchAd() {
+            if(!AdController) { if(tg && tg.showAlert) tg.showAlert("Ads loading..."); return; }
+            try { 
+                await AdController.show(); 
+                db.ref('users/'+uid).update({ ads: (uData.ads || 0) + 1 });
+            } catch(e) { console.log(e); }
         }
 
-        function processWithdraw() {
-            if(userData.adsCount < 10) return tg.showAlert("You must watch at least 10 ads before you can withdraw!");
-            const amt = document.getElementById('withdraw-amt').value;
-            if(amt < 1) return tg.showAlert("Minimum withdrawal is 1.0 TON.");
-            tg.showAlert("Withdrawal Request Sent to Admin! Minimun 1 TON.");
+        function copyRef() {
+            const link = `https://t.me/YourBot_bot?start=${uid}`;
+            if(tg && tg.openTelegramLink) tg.openTelegramLink(`https://t.me/share/url?url=${link}&text=Join My Full Moon Farm!`);
         }
 
-        function doDemoTask(btn) {
-            btn.innerText = "Checking...";
-            btn.style.background = "#ccc";
-            setTimeout(() => {
-                btn.innerText = "Claimed";
-                btn.onclick = null;
-                btn.style.background = "#ff9800";
-                tg.showAlert("Task Completed! +0.5 TON Bonus.");
-                // Update DB balance
-            }, 3000);
-        }
-
-        function copyReferralLink() {
-            const link = `https://t.me/YourBotLink?start=${uid}`;
-            navigator.clipboard.writeText(link);
-            tg.showAlert("Referral link copied!");
-        }
-
-        // --- CORE SYSTEM UTILS ---
-        function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        function openModal(id) { document.getElementById(id).style.display = 'block'; }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        function toggleBackgroundMusic() {
+        function toggleMusic() {
             const bgm = document.getElementById('bgMusic');
-            userData.musicEnabled = !userData.musicEnabled;
-            // Update DB
-            if(userData.musicEnabled) {
-                bgm.play();
-                document.getElementById('music-btn').innerText = "Music: ON 🔊";
-            } else {
-                bgm.pause();
-                document.getElementById('music-btn').innerText = "Music: OFF 🔇";
-            }
+            uData.music = !uData.music;
+            if(uData.music) { bgm.play(); document.getElementById('musicBtn').innerText = "🔊 Music: ON"; }
+            else { bgm.pause(); document.getElementById('musicBtn').innerText = "🔊 Music: OFF"; }
         }
 
-        // 🛠 Dev Mode: Fast Forward (আপনার টেস্টিংয়ের জন্য)
-        function cheatTime() {
-            if(!userData.plots) return tg.showAlert("Buy a crop first!");
-            const confirmFF = confirm("Developer Mode: Do you want to Fast Forward all crops 24 hours to check Claim state?");
-            if(confirmFF) {
-                let updates = {};
-                for(let key in userData.plots) {
-                    updates[`users/${uid}/plots/${key}/endTime`] = Date.now() - 1000;
-                }
-                db.ref().update(updates).then(() => {
-                    tg.showAlert("Fast Forwarded 24 Hours!");
-                    closeModal('settings-modal');
-                    location.reload();
-                });
-            }
+        function changeLang(l) {
+            db.ref('users/'+uid).update({ lang: l });
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
         }
 
-        // --- FIREBASE SYNC & STARTUP ---
-        function syncUserData() {
-            db.ref('users/'+uid).on('value', snapshot => {
-                if(snapshot.exists()) {
-                    userData = snapshot.val();
-                    if(!userData.plots) userData.plots = {}; // Ensure plot object exists
-                    renderFarmGrid(); // Core Rendering
-                } else {
-                    db.ref('users/'+uid).set(userData); // Create new user
-                }
-                
-                // Update UI Counters
-                document.getElementById('main-balance').innerText = (userData.balance || 0).toFixed(4);
-                document.getElementById('wallet-balance').innerText = (userData.balance || 0).toFixed(4);
-                document.getElementById('wallet-ads-count').innerText = userData.adsCount || 0;
-            });
+        function updateLangText(l) {
+            if(!dict[l]) return;
+            document.getElementById('t-loading').innerText = dict[l].load;
+            document.getElementById('t-withdraw').innerText = dict[l].w;
+            document.getElementById('t-tasks').innerText = dict[l].t;
+            document.getElementById('t-ads').childNodes[0].nodeValue = dict[l].a + " (";
+            document.getElementById('t-ref').innerText = dict[l].r;
+            document.getElementById('t-farm-title').innerText = dict[l].fTitle;
         }
-
-        // START APP
-        syncUserData();
     </script>
 </body>
 </html>

@@ -12,7 +12,7 @@ const TASK_CHANNEL = '@bBmw4PdWOrY5ZmI9';
 bot.start((ctx) => {
     ctx.reply('Welcome to Plant-TON Pro! 🌕\n\nClick the button below to open the Web App.', {
         reply_markup: {
-            inline_keyboard: [[{ text: "Play Now", web_app: { url: "YOUR_WEB_APP_URL_HERE" } }]]
+            inline_keyboard: [[{ text: "Play Now", web_app: { url: "https://telegram-plan-ton-pro-bot.vercel.app/" } }]]
         }
     });
 });

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Moon Farm Pro</title>
+    <title>Plant-Ton App Pro</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -17,7 +17,7 @@
         
         body, html {
             height: 100%; width: 100%; color: white; overflow-x: hidden;
-            background: url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=1080') center/cover no-repeat;
+            background: url('https://i.postimg.cc/Gh8px8sk/peakpx-(1).jpg') center/cover no-repeat;
             background-attachment: fixed;
         }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: -1; }
@@ -29,7 +29,7 @@
         }
         .moon-img {
             width: 180px; height: 180px; border-radius: 50%;
-            background: url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=300') center/cover;
+            background: url('https://i.postimg.cc/Gh8px8sk/peakpx-(1).jpg') center/cover;
             box-shadow: 0 0 50px rgba(255, 215, 0, 0.8); animation: pulse 2s infinite;
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -162,15 +162,15 @@
 
     <script>
         // 🔴🔴🔴 SETUP YOUR DATA HERE 🔴🔴🔴
-        const ADMIN_ID = 123456789; // আপনার টেলিগ্রাম আইডি
-        const BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"; // বটের টোকেন
-        const ADMIN_WALLET = "UQ...YOUR_WALLET_ADDRESS"; // রিয়েল টন রিসিভ করার অ্যাড্রেস
-        const CHANNEL_USER = "@your_channel_username"; // চ্যানেল ইউজারনেম
+        const ADMIN_ID = 8514470262; // আপনার টেলিগ্রাম আইডি
+        const BOT_TOKEN = "7956497373:AAFdqSrJkFywUlIxKbll25aZkg3e6tURfpE"; // বটের টোকেন
+        const ADMIN_WALLET = "UQCgHCVc-ZZ-L9UjN4-yjUAHn2ydmfqQvPVywZrrQYQP-Qkj"; // রিয়েল টন রিসিভ করার অ্যাড্রেস
+        const CHANNEL_USER = "@xrocket1xm"; // চ্যানেল ইউজারনেম
         
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID"
+            apiKey: "AIzaSyAd1hFbpNBYt1-cVJv1fD8YBmwN_JqAA54",
+            databaseURL: "https://plan-ton-app-pro-default-rtdb.firebaseio.com",
+            projectId: "plan-ton-app-pro"
         };
         // 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
 
@@ -316,7 +316,7 @@
         // Utils
         function openModal(id) { if(id==='adminModal') loadAdmin(); document.getElementById(id).style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function copyRefer() { tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/YourBotName?start=${uid}`); }
+        function copyRefer() { tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/PlanTonAppbot?start=${uid}`); }
         
         let audioInit = false;
         function initAudio() { if(!audioInit && uData.music) { document.getElementById('bg-music').play(); audioInit=true; } }

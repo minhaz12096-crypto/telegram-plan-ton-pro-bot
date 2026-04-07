@@ -306,19 +306,23 @@
             if(status === 'rejected') db.ref('users/'+targetId+'/bal').transaction(b => (b||0) + amt); // Refund if rejected
 
             const msg = status === 'approved' 
-                ? `🎊 **Withdrawal Successful!** 🎊
+                ? `# মনে করুন ইউজারের ডেটা এগুলো (এগুলো আপনার বোট থেকে আসবে)
+amount = "5.5" 
+wallet = "EQB...x4z"
+current_time = "01:10 AM"
 
-✅ **Congratulations!**
-Your withdrawal request has been **APPROVED**.
-
-💰 **Amount:{amt} TON
-👛 **Wallet Address:{wallet_address}
-⏰ **Time:{time}
-📅 **Date:{date}
-📜 **Status:** Completed
-
-Thank you for being with **Plant Ton Pro**! 🌿
-Check your wallet to verify the transaction.`; 
+# এই টেক্সটটি আপনার বোটের মেসেজ সেকশনে ব্যবহার করবেন
+text = (
+    "🎊 **Withdrawal Successful!** 🎊\n\n"
+    "✅ **Congratulations!**\n"
+    "Your withdrawal request has been **APPROVED**.\n\n"
+    f"💰 **Amount:** {amount} TON\n"
+    f"👛 **Wallet Address:** {wallet}\n"
+    f"⏰ **Time:** {current_time}\n"
+    "📜 **Status:** Sent to your wallet\n\n"
+    "Thank you for being with **Plant Ton Pro**! 🌿"
+)
+`; 
                  `⚠️ **Withdrawal Notice** ⚠️
 
 ❌ **Transaction Rejected**

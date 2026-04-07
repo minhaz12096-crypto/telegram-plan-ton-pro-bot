@@ -18,7 +18,7 @@ bot.start((ctx) => {
     ctx.reply(
         "Welcome to the Moon Premium Bot! 🌕\nComplete tasks, upgrade plans, and earn TON.",
         Markup.inlineKeyboard([
-            [Markup.button.webApp("🌕 Open App", "https://t.me/PlanTonAppbot/app")]
+            [Markup.button.webApp("🌕 Open App", "https://telegram-plan-ton-pro-bot.vercel.app")]
         ])
     );
 });

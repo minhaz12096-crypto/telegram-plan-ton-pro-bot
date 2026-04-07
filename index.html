@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Plan-Ton App Pro</title>
+    <title>Moon Farm Pro</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -17,7 +17,7 @@
         
         body, html {
             height: 100%; width: 100%; color: white; overflow-x: hidden;
-            background: url('https://i.postimg.cc/Gh8px8sk/peakpx-(1).jpg') center/cover no-repeat;
+            background: url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=1080') center/cover no-repeat;
             background-attachment: fixed;
         }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: -1; }
@@ -29,7 +29,7 @@
         }
         .moon-img {
             width: 180px; height: 180px; border-radius: 50%;
-            background: url('https://i.postimg.cc/Gh8px8sk/peakpx-(1).jpg') center/cover;
+            background: url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=300') center/cover;
             box-shadow: 0 0 50px rgba(255, 215, 0, 0.8); animation: pulse 2s infinite;
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -108,7 +108,7 @@
             <span class="close-btn" onclick="closeModal('settingsModal')">✖</span>
             <h2 style="color:var(--gold); margin-bottom:20px;">Settings</h2>
             <button class="btn-submit" onclick="toggleMusic()" style="margin-bottom:20px; background:#333; color:white;">Music: <span id="music-status">OFF</span></button>
-            <h4>Language 🌍</h4>
+            <h4>Language / ভাষা</h4>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
                 <button class="icon-btn" onclick="setLang('en')">🇺🇸 English</button>
                 <button class="icon-btn" onclick="setLang('bn')">🇧🇩 বাংলা</button>
@@ -123,7 +123,7 @@
             <span class="close-btn" onclick="closeModal('taskModal')">✖</span>
             <h2 style="color:var(--gold); margin-bottom:10px;">Join Channel</h2>
             <p style="font-size:14px; color:#aaa; margin-bottom:20px;">Join to get 0.05 TON instantly!</p>
-            <button class="btn-submit" onclick="window.open('https://t.me/xrocket1xm')" style="margin-bottom:10px; background:#0088cc; color:white;">1. Join Channel</button>
+            <button class="btn-submit" onclick="window.open('https://t.me/YOUR_CHANNEL_USERNAME')" style="margin-bottom:10px; background:#0088cc; color:white;">1. Join Channel</button>
             <button class="btn-submit" onclick="checkTask()">2. Check & Claim</button>
         </div>
     </div>
@@ -162,15 +162,15 @@
 
     <script>
         // 🔴🔴🔴 SETUP YOUR DATA HERE 🔴🔴🔴
-        const ADMIN_ID = 8514470262; // আপনার টেলিগ্রাম আইডি
-        const BOT_TOKEN = "7956497373:AAFdqSrJkFywUlIxKbll25aZkg3e6tURfpE"; // বটের টোকেন
-        const ADMIN_WALLET = "UQCgHCVc-ZZ-L9UjN4-yjUAHn2ydmfqQvPVywZrrQYQP-Qkj"; // রিয়েল টন রিসিভ করার অ্যাড্রেস
-        const CHANNEL_USER = "@xrocket1xm"; // চ্যানেল ইউজারনেম
+        const ADMIN_ID = 123456789; // আপনার টেলিগ্রাম আইডি
+        const BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"; // বটের টোকেন
+        const ADMIN_WALLET = "UQ...YOUR_WALLET_ADDRESS"; // রিয়েল টন রিসিভ করার অ্যাড্রেস
+        const CHANNEL_USER = "@your_channel_username"; // চ্যানেল ইউজারনেম
         
         const firebaseConfig = {
-            apiKey: "AIzaSyAd1hFbpNBYt1-cVJv1fD8YBmwN_JqAA54",
-            databaseURL: "https://plan-ton-app-pro-default-rtdb.firebaseio.com",
-            projectId: "plan-ton-app-pro"
+            apiKey: "YOUR_API_KEY",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID"
         };
         // 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
 
@@ -184,7 +184,7 @@
         
         // TON Connect UI Setup
         let tonUI = new TON_CONNECT_UI.TonConnectUI({ 
-            manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/tonconnect-manifest.json', 
+            manifestUrl: 'https://raw.githubusercontent.com/ton-community/tutorials/main/03-client/test/public/tonconnect-manifest.json', 
             buttonRootId: 'ton-connect-btn' 
         });
 
@@ -263,8 +263,8 @@
                 const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${CHANNEL_USER}&user_id=${uid}`);
                 const data = await res.json();
                 if(data.ok && ['member', 'administrator', 'creator'].includes(data.result.status)) {
-                    db.ref('users/'+uid).update({ bal: uData.bal + 0.1, taskDone: true });
-                    closeModal('taskModal'); tg.showAlert("✅ 0.1 TON Added!");
+                    db.ref('users/'+uid).update({ bal: uData.bal + 0.05, taskDone: true });
+                    closeModal('taskModal'); tg.showAlert("✅ 0.05 TON Added!");
                 } else { tg.showAlert("❌ Join the channel first!"); }
             } catch(e) { tg.showAlert("Error checking task."); }
         }
@@ -305,42 +305,28 @@
             db.ref('users/'+targetId).update({ wStatus: status });
             if(status === 'rejected') db.ref('users/'+targetId+'/bal').transaction(b => (b||0) + amt); // Refund if rejected
 
-            const msg = status === 'approved' 
-                ? `# মনে করুন ইউজারের ডেটা এগুলো (এগুলো আপনার বোট থেকে আসবে)
-amount = "5.5" 
-wallet = "EQB...x4z"
-current_time = "01:10 AM"
+            // ডাইনামিক সময় এবং তারিখ তৈরি করা
+            let d = new Date();
+            let currentTime = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            let currentDate = d.toLocaleDateString('en-GB');
+            let walletAddress = "Connected TON Wallet"; // যেহেতু ডাটাবেসে ওয়ালেট সেভ করা নেই, তাই এটি ডিফল্ট রাখা হলো
 
-# এই টেক্সটটি আপনার বোটের মেসেজ সেকশনে ব্যবহার করবেন
-text = (
-    "🎊 **Withdrawal Successful!** 🎊\n\n"
-    "✅ **Congratulations!**\n"
-    "Your withdrawal request has been **APPROVED**.\n\n"
-    f"💰 **Amount:** {amount} TON\n"
-    f"👛 **Wallet Address:** {wallet}\n"
-    f"⏰ **Time:** {current_time}\n"
-    "📜 **Status:** Sent to your wallet\n\n"
-    "Thank you for being with **Plant Ton Pro**! 🌿"`; 
-                 `⚠️ **Withdrawal Notice** ⚠️
-
-❌ **Transaction Rejected**
-Your withdrawal of ${amt} TON** has been **REJECTED**.
-
-👛 **Target Wallet:{wallet_address}
-⏰ **Rejected Time:{time}
-
-📌 **Reason:** Your balance is below the minimum limit or incorrect wallet address.
-
-🌿 Keep farming to increase your balance and try again!`;
+            let msg = "";
+            if(status === 'approved') {
+                msg = `🎊 **Withdrawal Successful!** 🎊\n\n✅ **Congratulations!**\nYour withdrawal request has been **APPROVED**.\n\n💰 **Amount:** ${amt} TON\n👛 **Wallet Address:** ${walletAddress}\n⏰ **Time:** ${currentTime}\n📜 **Status:** Sent to your wallet\n\nThank you for being with **Plant Ton Pro**! 🌿`;
+            } else {
+                msg = `⚠️ **Withdrawal Notice** ⚠️\n\n❌ **Transaction Rejected**\nWe're sorry! Your withdrawal request has been **REJECTED**.\n\n💰 **Amount:** ${amt} TON\n👛 **Target Wallet:** ${walletAddress}\n⏰ **Time:** ${currentTime}\n📅 **Date:** ${currentDate}\n\n📌 **Reason:** Insufficient minimum balance or security verification failed. Please ensure you have reached the withdrawal limit.\n\n💡 **What to do?**\nCheck your balance and try again. If you have any questions, contact our **Support Group**.\n\n🌿 Keep planting to earn more!`;
+            }
             
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${targetId}&text=${encodeURIComponent(msg)}`);
+            // parse_mode=Markdown যোগ করা হয়েছে যেন টেক্সট বোল্ড দেখায়
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${targetId}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
             tg.showAlert(`SMS sent to user!`);
         }
 
         // Utils
         function openModal(id) { if(id==='adminModal') loadAdmin(); document.getElementById(id).style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function copyRefer() { tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/PlanTonAppbot?start=${uid}`); }
+        function copyRefer() { tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/YourBotName?start=${uid}`); }
         
         let audioInit = false;
         function initAudio() { if(!audioInit && uData.music) { document.getElementById('bg-music').play(); audioInit=true; } }
@@ -351,7 +337,7 @@ Your withdrawal of ${amt} TON** has been **REJECTED**.
         }
 
         // Language
-        const langD = { en:{t:"Task (0.1 TON)", r:"Referral (0.5 TON)", f:"Farm Slots (24h Profit)"}, bn:{t:"টাস্ক (০.০৫ টন)", r:"রেফারেল", f:"খামার (২৪ ঘণ্টা পর প্রফিট)"} };
+        const langD = { en:{t:"Task (0.05 TON)", r:"Referral", f:"Farm Slots (24h Profit)"}, bn:{t:"টাস্ক (০.০৫ টন)", r:"রেফারেল", f:"খামার (২৪ ঘণ্টা পর প্রফিট)"} };
         function setLang(l) { if(langD[l]) { document.getElementById('lang-task').innerText=langD[l].t; document.getElementById('lang-ref').innerText=langD[l].r; document.getElementById('lang-farm').innerText=langD[l].f; } }
     </script>
 </body>

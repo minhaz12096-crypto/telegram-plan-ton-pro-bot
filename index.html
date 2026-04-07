@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Plan-Ton App Pro</title>
+    <title>Plant-TON Pro Ultimate</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
@@ -12,359 +12,786 @@
     <script src="https://adsgram.ai/js-sdk/direct-ads.js"></script>
 
     <style>
-        /* === ডার্ক প্রিমিয়াম ও ফুল মুন ডিজাইন === */
-        :root { --gold: #ffd700; --bg-dark: #0a0705; --wood: #8d6e63; }
+        /* =========================================
+           GLOBAL STYLES & VARIABLES
+        ========================================= */
+        :root {
+            --primary: #4CAF50;
+            --gold: #FFD700;
+            --wood: #8D6E63;
+            --dark: #121212;
+            --text: #FFFFFF;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
         
-        body, html { 
-            margin: 0; padding: 0; height: 100%; width: 100%; 
-            color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif; 
-            overflow-x: hidden; overflow-y: auto; background-color: #000;
+        body, html {
+            margin: 0; padding: 0; height: 100%; width: 100%;
+            background-color: #000; color: var(--text);
+            overflow-x: hidden;
         }
 
         /* Full Moon Background */
-        .moon-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=1080') no-repeat center center;
-            background-size: cover; z-index: -1;
+        .app-bg {
+            position: fixed; inset: 0;
+            background: url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=1080') center/cover no-repeat;
+            filter: brightness(0.4); z-index: -1;
         }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: -1; }
 
-        /* 3 Second Loading Screen */
-        #loader { 
-            position: fixed; inset: 0; z-index: 99999; background: #000; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            transition: opacity 0.5s ease;
+        /* =========================================
+           LOADING SCREEN
+        ========================================= */
+        #loader {
+            position: fixed; inset: 0; background: #000; z-index: 99999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .moon-loader-img { width: 180px; height: 180px; border-radius: 50%; box-shadow: 0 0 50px rgba(255,255,255,0.6); margin-bottom: 30px; object-fit: cover; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,215,0,0.2); border-top: 4px solid var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .moon-img {
+            width: 180px; height: 180px; border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+            animation: pulse 2s infinite ease-in-out;
+            background: url('https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=300') center/cover;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .loading-text { margin-top: 25px; color: var(--gold); font-size: 20px; font-weight: bold; letter-spacing: 2px; }
 
-        /* Main App Area */
-        #app { display: none; min-height: 100vh; flex-direction: column; position: relative; padding-bottom: 30px; }
+        /* =========================================
+           MAIN APP & HEADER
+        ========================================= */
+        #app { display: none; min-height: 100vh; flex-direction: column; position: relative; padding-bottom: 20px; }
         
-        /* Top Header */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--gold); backdrop-filter: blur(10px); }
-        .balance-box { background: rgba(255,215,0,0.15); border: 1.5px solid var(--gold); padding: 8px 15px; border-radius: 30px; font-weight: bold; font-size: 16px; color: var(--gold); display:flex; align-items:center; gap:8px;}
-        .settings-btn { font-size: 24px; background: none; border: none; color: #fff; cursor: pointer; transition: 0.3s; }
+        #admin-banner {
+            display: none; background: linear-gradient(90deg, #d32f2f, #f44336);
+            color: white; padding: 12px; text-align: center; font-weight: bold;
+            cursor: pointer; font-size: 14px; border-bottom: 2px solid #fff;
+            animation: slideDown 0.5s ease;
+        }
 
-        /* Dashboard Buttons (No Bottom Menu) */
-        .dashboard-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; background: rgba(0,0,0,0.5); margin: 10px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .dash-btn { background: rgba(0,0,0,0.6); border: 1px solid var(--wood); padding: 12px 5px; border-radius: 12px; color: #fff; font-size: 12px; font-weight: bold; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.2s; }
-        .dash-btn:active { background: var(--gold); color: #000; border-color: var(--gold); }
-        .dash-btn i { font-size: 22px; }
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; background: rgba(0, 0, 0, 0.75);
+            border-bottom: 2px solid var(--gold); backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+        }
 
-        /* 10 Slot Farm Grid */
-        .farm-container { padding: 15px; }
+        .bal-container {
+            background: rgba(255, 215, 0, 0.15); border: 2px solid var(--gold);
+            padding: 8px 15px; border-radius: 20px; font-weight: 900;
+            color: var(--gold); font-size: 16px; display: flex; align-items: center; gap: 5px;
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .settings-btn { background: none; border: none; font-size: 28px; cursor: pointer; transition: 0.3s; }
+        .settings-btn:active { transform: rotate(90deg); }
+
+        /* =========================================
+           TOP DASHBOARD BUTTONS
+        ========================================= */
+        .dash-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 10px; padding: 15px; background: rgba(255,255,255,0.02);
+        }
+        .dash-btn {
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            border: 1px solid var(--wood); border-radius: 12px;
+            padding: 15px 5px; text-align: center; font-size: 12px;
+            font-weight: bold; cursor: pointer; color: #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s;
+        }
+        .dash-btn:active { transform: translateY(4px); box-shadow: none; background: var(--gold); color: #000; }
+        .dash-btn i { font-size: 24px; display: block; margin-bottom: 8px; font-style: normal; }
+
+        /* =========================================
+           FARM GRID (10 SLOTS)
+        ========================================= */
+        .farm-wrapper { padding: 15px; flex-grow: 1; }
         .farm-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .plot { 
-            background: rgba(30, 20, 15, 0.9); border: 3px solid var(--wood); border-radius: 15px; 
-            height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            position: relative; box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        
+        .plot {
+            background: url('https://www.transparenttextures.com/patterns/wood-pattern.png'), rgba(44, 30, 22, 0.9);
+            border: 4px solid var(--wood); border-radius: 15px;
+            height: 180px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);
         }
-        .plot.locked { border-color: #333; background: rgba(15,15,15,0.95); }
-        .plot.ready { border-color: var(--gold); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 5px var(--gold); } 50% { box-shadow: 0 0 20px var(--gold); } 100% { box-shadow: 0 0 5px var(--gold); } }
-        
-        .icon-large { font-size: 55px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
-        .action-btn { background: var(--gold); color: #000; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; margin-top: 10px; width: 85%; cursor: pointer; }
 
-        /* Modals */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-content { background: #111; border: 2px solid var(--gold); width: 100%; max-width: 400px; border-radius: 20px; padding: 25px; text-align: center; position: relative; }
-        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; background: none; border: none; color: red; cursor: pointer; }
-
-        .lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .lang-btn { background: #222; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 13px; }
-        .lang-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+        /* Locked State */
+        .plot.locked { background: rgba(20,20,20,0.9); border-color: #333; filter: grayscale(0.8); }
+        .plot.locked .lock-icon { font-size: 40px; margin-bottom: 10px; }
         
-        input[type="number"] { width: 85%; padding: 15px; border-radius: 10px; border: 2px solid var(--wood); background: #222; color: #fff; text-align: center; font-size: 18px; margin-bottom: 15px; }
+        /* Growing State */
+        .plot .dirt { position: absolute; bottom: 0; width: 100%; height: 40px; background: #3e2723; border-top: 2px solid #271611; }
+        .plant-emoji { font-size: 50px; z-index: 2; transition: all 1s ease; }
+        .watering-can {
+            position: absolute; top: 10px; right: -50px; font-size: 30px; z-index: 3;
+            opacity: 0; transition: 0.5s;
+        }
+        .plot.watering .watering-can {
+            right: 20px; opacity: 1;
+            animation: tiltWater 2s forwards;
+        }
+        @keyframes tiltWater {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-45deg); }
+            100% { transform: rotate(0deg); opacity: 0; }
+        }
+        
+        .timer-badge {
+            background: rgba(0,0,0,0.8); color: var(--gold);
+            padding: 5px 10px; border-radius: 10px; font-weight: bold;
+            font-size: 13px; z-index: 2; margin-top: 10px; border: 1px solid var(--gold);
+        }
+
+        .action-btn {
+            background: linear-gradient(to bottom, #FFD700, #F39C12);
+            color: #000; border: none; padding: 10px 15px;
+            border-radius: 8px; font-weight: 900; cursor: pointer;
+            width: 80%; z-index: 2; margin-top: 10px; box-shadow: 0 4px 0 #B9770E;
+        }
+        .action-btn:active { transform: translateY(4px); box-shadow: none; }
+        .harvest-btn { background: linear-gradient(to bottom, #4CAF50, #2E7D32); color: #fff; box-shadow: 0 4px 0 #1B5E20; }
+
+        /* Bottom Illustration (No menus) */
+        .bottom-art {
+            text-align: center; padding: 20px 0; opacity: 0.7;
+            font-size: 60px; pointer-events: none;
+        }
+
+        /* =========================================
+           MODALS (Popups)
+        ========================================= */
+        .modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.9); z-index: 2000;
+            align-items: center; justify-content: center; padding: 15px;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: #1e1e1e; border: 2px solid var(--gold);
+            width: 100%; max-width: 400px; max-height: 85vh;
+            border-radius: 20px; padding: 25px 20px;
+            text-align: center; overflow-y: auto; position: relative;
+            box-shadow: 0 0 30px rgba(255,215,0,0.2);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-title { color: var(--gold); font-size: 22px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .close-icon { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #ff4444; cursor: pointer; }
+
+        /* Input & Forms */
+        .input-box {
+            width: 100%; padding: 15px; border-radius: 12px;
+            background: #111; color: #fff; border: 1px solid var(--wood);
+            font-size: 16px; margin-bottom: 15px; outline: none;
+        }
+        .input-box:focus { border-color: var(--gold); }
+        
+        .modal-btn {
+            background: var(--gold); color: #000; border: none;
+            padding: 15px; border-radius: 12px; font-weight: bold;
+            font-size: 16px; width: 100%; cursor: pointer; margin-bottom: 10px;
+        }
+        .btn-red { background: #d32f2f; color: #fff; }
+
+        /* Plan Selection Cards */
+        .plan-card {
+            background: #2a2a2a; border: 1px solid #444; border-radius: 12px;
+            padding: 15px; margin-bottom: 15px; text-align: left; cursor: pointer;
+            transition: 0.2s; display: flex; justify-content: space-between; align-items: center;
+        }
+        .plan-card:hover, .plan-card.active { border-color: var(--gold); background: rgba(255,215,0,0.1); }
+        .plan-price { font-weight: bold; color: var(--gold); font-size: 18px; }
+
+        /* Settings Language Grid */
+        .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .lang-btn {
+            background: #333; color: #fff; border: 1px solid #555;
+            padding: 12px; border-radius: 8px; font-size: 14px; cursor: pointer;
+        }
+        .lang-btn.active { background: var(--primary); border-color: #fff; font-weight: bold; }
+
+        /* Admin Dashboard Cards */
+        .req-card {
+            background: #111; border: 1px solid #444; padding: 15px;
+            border-radius: 12px; text-align: left; margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .req-card b { color: var(--gold); }
+        .req-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-approve { background: #4CAF50; color: white; border: none; padding: 10px; border-radius: 8px; flex: 1; font-weight: bold; }
+        .btn-reject { background: #F44336; color: white; border: none; padding: 10px; border-radius: 8px; flex: 1; font-weight: bold; }
+
     </style>
 </head>
-<body>
+<body onclick="initAppAudio()">
 
-    <div class="moon-bg"></div>
-    <div class="overlay"></div>
-    <audio id="bgMusic" loop src="https://www.bensound.com/bensound-music/bensound-relaxing.mp3"></audio>
+    <div class="app-bg"></div>
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="loader">
-        <img src="https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=500" class="moon-loader-img" alt="Moon">
-        <div class="spinner"></div>
-        <h2 style="color:var(--gold); margin-top:20px; font-weight:bold; letter-spacing: 1px;" id="t-loading">Loading Universe...</h2>
+        <div class="moon-img"></div>
+        <div class="loading-text" id="t-loading">Loading Farm System...</div>
     </div>
 
     <div id="app">
         
+        <div id="admin-banner" onclick="openModal('adminModal')">
+            ⚠️ ADMIN PANEL: MANAGE WITHDRAWALS ⚠️
+        </div>
+
         <div class="header">
-            <div class="balance-box">💎 <span id="ui-bal">0.000</span></div>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div id="ton-connect-header"></div> <button class="settings-btn" onclick="openModal('settingsModal')">⚙️</button>
+            <div class="bal-container">
+                💎 <span id="ui-bal">0.000</span>
+            </div>
+            <div class="header-actions">
+                <div id="ton-connect-btn"></div>
+                <button class="settings-btn" onclick="openModal('settingsModal')">⚙️</button>
             </div>
         </div>
 
-        <div class="dashboard-menu">
-            <div class="dash-btn" onclick="openModal('withdrawModal')"><i style="color:#4caf50">💸</i> <span id="t-withdraw">Withdraw</span></div>
-            <div class="dash-btn" onclick="openModal('tasksModal')"><i style="color:#2196f3">📋</i> <span id="t-tasks">Tasks</span></div>
-            <div class="dash-btn" onclick="watchAd()"><i style="color:#ff9800">📺</i> <span id="t-ads">Ads (<span id="ui-ads">0</span>)</span></div>
-            <div class="dash-btn" onclick="copyRef()"><i style="color:#e91e63">👥</i> <span id="t-ref">Refer</span></div>
+        <div class="dash-grid">
+            <div class="dash-btn" onclick="openWithdraw()">
+                <i>💸</i><span id="t-w">Withdraw</span>
+            </div>
+            <div class="dash-btn" onclick="openModal('taskModal')">
+                <i>📋</i><span id="t-t">Tasks</span>
+            </div>
+            <div class="dash-btn" onclick="watchAd()">
+                <i>📺</i><span id="t-a">Ads</span>
+            </div>
+            <div class="dash-btn" onclick="copyReferral()">
+                <i>👥</i><span id="t-r">Refer</span>
+            </div>
         </div>
 
-        <div class="farm-container">
-            <h3 style="text-align:center; color:var(--gold); margin-bottom:15px; font-size:22px; border-bottom: 1px solid var(--wood); padding-bottom:10px;" id="t-farm-title">YOUR LUNAR FARM</h3>
+        <div class="farm-wrapper">
             <div class="farm-grid" id="farm-grid">
                 </div>
+        </div>
+
+        <div class="bottom-art">
+            🌿🍄🌱
+        </div>
+    </div>
+
+    <div id="planModal" class="modal">
+        <div class="modal-content">
+            <span class="close-icon" onclick="closeModal('planModal')">✖</span>
+            <h2 class="modal-title" id="t-select-plan">Select Plan</h2>
+            <p style="color:#aaa; font-size:13px; margin-bottom:20px;">Deposit real TON to start farming.</p>
+            
+            <div class="plan-card" id="plan-3" onclick="selectPlan(3, 2, 3.5)">
+                <div>
+                    <div style="font-size:16px; font-weight:bold;">🌱 Starter Plan (3 Days)</div>
+                    <div style="font-size:12px; color:#888; margin-top:5px;">Profit: 3.5 TON Total</div>
+                </div>
+                <div class="plan-price">2 TON</div>
+            </div>
+
+            <div class="plan-card" id="plan-30" onclick="selectPlan(30, 10, 25)">
+                <div>
+                    <div style="font-size:16px; font-weight:bold;">🌳 Tycoon Plan (30 Days)</div>
+                    <div style="font-size:12px; color:#888; margin-top:5px;">Profit: 25 TON Total</div>
+                </div>
+                <div class="plan-price">10 TON</div>
+            </div>
+
+            <button class="modal-btn" id="btn-buy-plan" onclick="executePlanBuy()" disabled>Buy Plan via TON</button>
+        </div>
+    </div>
+
+    <div id="wModal" class="modal">
+        <div class="modal-content">
+            <span class="close-icon" onclick="closeModal('wModal')">✖</span>
+            <h2 class="modal-title" id="t-withdraw">Withdraw TON</h2>
+            
+            <div style="background:#2a2a2a; padding:15px; border-radius:10px; margin-bottom:15px; text-align:left;">
+                <div style="font-size:12px; color:#aaa;">Connected Wallet:</div>
+                <div id="w-wallet" style="font-size:11px; color:var(--gold); word-break:break-all; margin-top:5px;">Not Connected</div>
+            </div>
+
+            <input type="number" id="w-amt" class="input-box" placeholder="Enter Amount (Min 5 TON)" step="0.1">
+            
+            <button class="modal-btn" onclick="submitWithdraw()">Confirm Request</button>
+            <div style="font-size:12px; color:#ff9800; margin-top:10px;">*Min 10 Ads required for withdrawal.</div>
+        </div>
+    </div>
+
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <span class="close-icon" onclick="closeModal('taskModal')">✖</span>
+            <h2 class="modal-title">Your Progress</h2>
+            <div style="background:#111; border:1px solid var(--wood); padding:20px; border-radius:12px;">
+                <h1 style="color:var(--gold); margin:0;" id="ui-ads-count">0 / 10</h1>
+                <p style="margin-top:5px; color:#aaa;">Ads Watched</p>
+            </div>
+            <p style="font-size:13px; color:#fff; margin-top:15px;">You must watch at least 10 ads to enable withdrawals.</p>
         </div>
     </div>
 
     <div id="settingsModal" class="modal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('settingsModal')">✖</button>
-            <h2 id="t-set-title" style="color:var(--gold);">Settings</h2>
+            <span class="close-icon" onclick="closeModal('settingsModal')">✖</span>
+            <h2 class="modal-title" id="t-settings">Settings</h2>
             
-            <button class="action-btn" id="musicBtn" onclick="toggleMusic()" style="width:100%; margin:20px 0; font-size:16px;">🔊 Music: OFF</button>
-            
-            <h4 style="margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:5px;">Select Language</h4>
+            <button class="modal-btn" id="music-btn" onclick="toggleMusic()" style="background:#444; color:#fff; display:flex; justify-content:space-between; align-items:center;">
+                <span>Background Music</span>
+                <span id="music-status">OFF 🔇</span>
+            </button>
+
+            <h4 style="margin-top:20px; text-align:left; color:#aaa;">Language / ভাষা</h4>
             <div class="lang-grid">
-                <button class="lang-btn" onclick="changeLang('bn')">🇧🇩 Bangla</button>
-                <button class="lang-btn active" onclick="changeLang('en')">🇺🇸 English</button>
-                <button class="lang-btn" onclick="changeLang('ru')">🇷🇺 Russian</button>
-                <button class="lang-btn" onclick="changeLang('hi')">🇮🇳 Hindi</button>
-                <button class="lang-btn" onclick="changeLang('ja')">🇯🇵 Japan</button>
-                <button class="lang-btn" onclick="changeLang('de')">🇩🇪 Germany</button>
+                <button class="lang-btn" id="lang-en" onclick="changeLang('en')">🇺🇸 English</button>
+                <button class="lang-btn" id="lang-bn" onclick="changeLang('bn')">🇧🇩 বাংলা</button>
+                <button class="lang-btn" id="lang-ru" onclick="changeLang('ru')">🇷🇺 Русский</button>
+                <button class="lang-btn" id="lang-hi" onclick="changeLang('hi')">🇮🇳 हिन्दी</button>
+                <button class="lang-btn" id="lang-ja" onclick="changeLang('ja')">🇯🇵 日本語</button>
+                <button class="lang-btn" id="lang-de" onclick="changeLang('de')">🇩🇪 Deutsch</button>
             </div>
         </div>
     </div>
 
-    <div id="withdrawModal" class="modal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('withdrawModal')">✖</button>
-            <h2 style="color:var(--gold);" id="t-w-title">Withdraw TON</h2>
-            
-            <div id="w-status-box" style="padding:15px; border-radius:10px; margin-bottom:15px; font-weight:bold; display:none; border:1px solid;"></div>
-
-            <p style="color:#aaa; font-size:13px; margin-bottom:10px;">Ensure your wallet is connected above!</p>
-            <input type="number" id="w-amt" placeholder="Enter Amount">
-            <button class="action-btn" style="width:85%; font-size:16px;" onclick="requestWithdraw()">Confirm Request</button>
-            <p style="color:#ff9800; font-size:12px; margin-top:15px;">*Min 10 Ads required for withdrawal.</p>
-        </div>
-    </div>
-
-    <div id="tasksModal" class="modal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal('tasksModal')">✖</button>
-            <h2 style="color:var(--gold);">Daily Tasks</h2>
-            <div style="background:#1a1a1a; padding:15px; border-radius:12px; border:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-weight:bold;">Join Official Channel</span>
-                <button class="action-btn" style="width:auto; margin:0;" onclick="tg.openTelegramLink('https://t.me/telegram')">Go</button>
+    <div id="adminModal" class="modal">
+        <div class="modal-content" style="max-width:500px;">
+            <span class="close-icon" onclick="closeModal('adminModal')">✖</span>
+            <h2 class="modal-title" style="color:#f44336;">Admin: Pending Withdrawals</h2>
+            <div id="admin-list" style="max-height: 60vh; overflow-y: auto;">
+                <p style="color:#aaa;">Loading requests...</p>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. GUARANTEED 3-SECOND LOADER (সবার আগে লোডার ফিক্স)
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                const app = document.getElementById('app');
-                if(loader) {
-                    loader.style.opacity = '0';
-                    setTimeout(() => { 
-                        loader.style.display = 'none'; 
-                        app.style.display = 'flex'; 
-                    }, 500);
-                }
-            }, 3000); // ঠিক ৩ সেকেন্ড পর ওপেন হবেই
-        });
+        // ==========================================
+        // 🔴 CONFIGURATION - UPDATE THESE VALUES 🔴
+        // ==========================================
+        
+        const ADMIN_ID = 123456789; // <-- আপনার টেলিগ্রাম ইউজার আইডি এখানে দিন
+        const BOT_TOKEN = "7123456789:AAHxxxxxxxxxxxxxxxxxxxxxxxxx"; // <-- BotFather থেকে পাওয়া আপনার বোট টোকেন
+        const ADMIN_WALLET = "UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"; // <-- যেখানে ইউজাররা রিয়েল TON পাঠাবে প্ল্যান কেনার জন্য
+        const MIN_WITHDRAW = 5; // মিনিমাম উইথড্র এমাউন্ট
 
-        // 2. Telegram Init
-        let tg, uid = "dev_user";
-        try {
-            tg = window.Telegram.WebApp;
-            tg.expand();
-            uid = tg.initDataUnsafe?.user?.id || "dev_user";
-        } catch(e) { console.log("Not in Telegram"); }
-
-        // 3. SAFE Firebase Init
-        const firebaseConfig = { apiKey: "AIzaSyAd1hFbpNBYt1-cVJv1fD8YBmwN_JqAA54", databaseURL: "https://plan-ton-app-pro-default-rtdb.firebaseio.com", projectId: "plan-ton-app-pro" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        // 4. SAFE SDK Init (Ton & Adsgram)
-        let tonConnectUI = null;
-        try {
-            // Header এ টার্গেট দিয়েছি যাতে এরর না খায়
-            tonConnectUI = new TON_CONNECT_UI.TonConnectUI({ 
-                manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/tonconnect-manifest.json', 
-                buttonRootId: 'ton-connect-header' 
-            });
-        } catch(e) { console.log("TON UI Error"); }
-
-        let AdController = null;
-        if(window.Adsgram) { AdController = window.Adsgram.init({ blockId: "2627" }); }
-
-        // 5. Global State
-        let uData = { bal: 0, ads: 0, wStatus: '', farm: {}, lang: 'en', music: false };
-        let prevStatus = ''; 
-
-        // Language Config
-        const dict = {
-            'en': { load: "Loading Universe...", w: "Withdraw", t: "Tasks", a: "Ads", r: "Refer", fTitle: "YOUR LUNAR FARM", lock: "Locked", buy: "Buy", grow: "Growing", claim: "Claim" },
-            'bn': { load: "লোডিং হচ্ছে...", w: "উইথড্র", t: "টাস্ক", a: "অ্যাড", r: "রেফার", fTitle: "আপনার খামার", lock: "লকড", buy: "কিনুন", grow: "বড় হচ্ছে", claim: "সংগ্রহ" },
-            'ru': { load: "Загрузка...", w: "Вывод", t: "Задачи", a: "Реклама", r: "Рефералы", fTitle: "Ваша ферма", lock: "Закрыто", buy: "Купить", grow: "Растет", claim: "Собрать" },
-            'hi': { load: "लोड हो रहा है...", w: "निकालना", t: "कार्य", a: "विज्ञापन", r: "रेफर", fTitle: "आपका खेत", lock: "बंद है", buy: "खरीदें", grow: "बढ़ रहा है", claim: "दावा करें" },
-            'ja': { load: "ロード中...", w: "撤退", t: "タスク", a: "広告", r: "参照", fTitle: "あなたの農場", lock: "ロック", buy: "買う", grow: "成長中", claim: "請求" },
-            'de': { load: "Laden...", w: "Auszahlen", t: "Aufgaben", a: "Anzeigen", r: "Verweisen", fTitle: "Deine Farm", lock: "Gesperrt", buy: "Kaufen", grow: "Wachsen", claim: "Sammeln" }
+        // Firebase Config (Replace with your keys)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDYaSQbU380U6hcUmBgkDr4WAEmEu45X_U",
+            databaseURL: "https://plant-ton-pro-default-rtdb.firebaseio.com",
+            projectId: "plant-ton-pro"
         };
 
-        // 6. DB Sync & Bot SMS Alerts
-        db.ref('users/' + uid).on('value', snap => {
-            const val = snap.val();
-            if(val) {
-                uData = val;
-                document.getElementById('ui-bal').innerText = (uData.bal || 0).toFixed(3);
-                document.getElementById('ui-ads').innerText = uData.ads || 0;
-                
-                // === BOT SMS SYSTEM ===
-                if(prevStatus === 'pending' && uData.wStatus === 'approved') {
-                    if(tg && tg.showAlert) tg.showAlert("✅ Admin Approved Your Withdraw! Please check your wallet.");
-                } else if (prevStatus === 'pending' && uData.wStatus === 'rejected') {
-                    if(tg && tg.showAlert) tg.showAlert("❌ Admin Rejected Your Withdraw! Contact support.");
-                }
-                prevStatus = uData.wStatus; 
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-                updateWithdrawUI(uData.wStatus);
-                renderFarm();
-                if(uData.lang) updateLangText(uData.lang);
-            } else {
-                db.ref('users/' + uid).set({ bal: 5, ads: 0, wStatus: '', farm: {}, lang: 'en' });
-            }
+        const uid = tg.initDataUnsafe?.user?.id || 123456789; // Default for testing
+        const uname = tg.initDataUnsafe?.user?.first_name || "Tycoon";
+        
+        let uData = { bal: 0, ads: 0, wStatus: '', farm: {}, lang: 'en', music: false };
+        let selectedSlot = null;
+        let selectedPlan = null;
+        let audioStarted = false;
+        let previousStatus = '';
+
+        // SDK Initialization
+        const tonUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://telegram-plan-ton-pro-bot.vercel.app/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-btn'
         });
+        
+        let Ads;
+        try {
+            // Your Adsgram Block ID
+            Ads = window.Adsgram.init({ blockId: "2627" });
+        } catch(e) {
+            console.error("Adsgram init failed", e);
+        }
 
-        // 7. 10 Slot Farming System
-        const COST = 2; // Unlock Cost
-        const PROFIT = 5; // Reward
-        const GROW_TIME = 24 * 3600000; // 24 Hours
+        // ==========================================
+        // ON LOAD & DATA SYNC
+        // ==========================================
+        window.onload = () => {
+            // Show Admin Panel if User == Admin
+            if(uid == ADMIN_ID) document.getElementById('admin-banner').style.display = 'block';
 
+            // Loader Timeout (3 Seconds)
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+            }, 3000);
+
+            // Fetch Data
+            db.ref('users/' + uid).on('value', snap => {
+                const val = snap.val();
+                if(val) {
+                    uData = val;
+                    if(!uData.farm) uData.farm = {};
+                    
+                    // Update UI UI
+                    document.getElementById('ui-bal').innerText = (uData.bal || 0).toFixed(3);
+                    document.getElementById('ui-ads-count').innerText = `${uData.ads || 0} / 10`;
+
+                    // Check Notification (Bot SMS Simulation via Alert inside app for user awareness)
+                    if(previousStatus === 'pending' && uData.wStatus === 'approved') {
+                        tg.showAlert("✅ Success! Your withdrawal has been processed.");
+                    } else if(previousStatus === 'pending' && uData.wStatus === 'rejected') {
+                        tg.showAlert("❌ Alert! Admin rejected your withdrawal.");
+                    }
+                    previousStatus = uData.wStatus;
+
+                    applyLanguage(uData.lang || 'en');
+                    updateMusicUI();
+                    renderFarm();
+                } else {
+                    // New User Setup
+                    db.ref('users/' + uid).set({ 
+                        name: uname, bal: 0, ads: 0, wStatus: '', farm: {}, lang: 'en', music: false 
+                    });
+                }
+            });
+
+            // Wallet Listener
+            tonUI.onStatusChange(wallet => {
+                if(wallet) {
+                    const addr = wallet.account.address;
+                    document.getElementById('w-wallet').innerText = addr.substring(0,6) + "..." + addr.substring(addr.length-4);
+                } else {
+                    document.getElementById('w-wallet').innerText = "Not Connected";
+                }
+            });
+        };
+
+        // ==========================================
+        // FARM SYSTEM (10 Slots)
+        // ==========================================
         function renderFarm() {
             const grid = document.getElementById('farm-grid');
             grid.innerHTML = '';
-            const l = uData.lang || 'en';
             
             for(let i=1; i<=10; i++) {
-                const sID = 'slot_' + i;
-                const sData = uData.farm?.[sID];
+                const slotId = 's' + i;
+                const plotData = uData.farm[slotId];
                 const div = document.createElement('div');
                 div.className = 'plot';
+                div.id = 'plot-' + slotId;
 
-                if(!sData) {
+                if(!plotData) {
+                    // Locked State
                     div.classList.add('locked');
-                    div.innerHTML = `<div class="icon-large">🔒</div>
-                                     <div style="color:#888; margin-top:8px;">${dict[l].lock}</div>
-                                     <button class="action-btn" onclick="buyPlot('${sID}')">${dict[l].buy} ${COST}T</button>`;
+                    div.innerHTML = `
+                        <div class="lock-icon">🔒</div>
+                        <div style="color:#aaa; font-size:12px; margin-bottom:5px;">Slot ${i}</div>
+                        <button class="action-btn" onclick="openPlanModal('${slotId}')">Unlock</button>
+                        <div class="dirt"></div>
+                    `;
                 } else {
-                    const timeLeft = sData.end - Date.now();
+                    // Active or Ready State
+                    const now = Date.now();
+                    const timeLeft = plotData.end - now;
+
                     if(timeLeft > 0) {
-                        div.innerHTML = `<div class="icon-large">🌱</div>
-                                         <div style="color:var(--gold); font-weight:bold; margin-top:8px;">${dict[l].grow}</div>
-                                         <div id="t-${sID}" style="font-family:monospace; margin-top:5px; font-size:16px;">--:--:--</div>`;
-                        runTimer(sID, sData.end);
+                        // Growing
+                        div.innerHTML = `
+                            <div class="watering-can">🚿</div>
+                            <div class="plant-emoji">🌿</div>
+                            <div class="timer-badge" id="timer-${slotId}">--:--:--</div>
+                            <div class="dirt"></div>
+                        `;
+                        startTimer(slotId, plotData.end);
+                        
+                        // Watering Animation randomly
+                        if(Math.random() > 0.5) {
+                            setTimeout(() => div.classList.add('watering'), 1000);
+                            setTimeout(() => div.classList.remove('watering'), 3000);
+                        }
+
                     } else {
-                        div.classList.add('ready');
-                        div.innerHTML = `<div class="icon-large">🌳🍎</div>
-                                         <button class="action-btn" onclick="claimPlot('${sID}')">${dict[l].claim} +${PROFIT}</button>`;
+                        // Harvest Ready
+                        div.innerHTML = `
+                            <div class="plant-emoji" style="font-size:65px; transform: scale(1.1); text-shadow: 0 0 20px #FFD700;">🌳</div>
+                            <button class="action-btn harvest-btn" onclick="harvest('${slotId}', ${plotData.reward})">Harvest ${plotData.reward}T</button>
+                            <div class="dirt"></div>
+                        `;
                     }
                 }
                 grid.appendChild(div);
             }
         }
 
-        function runTimer(id, endTime) {
-            const intv = setInterval(() => {
+        function startTimer(slotId, endTime) {
+            const interval = setInterval(() => {
+                const el = document.getElementById('timer-' + slotId);
                 const diff = endTime - Date.now();
-                const el = document.getElementById('t-'+id);
-                if(diff <= 0 || !el) { clearInterval(intv); renderFarm(); }
-                else {
-                    const h = String(Math.floor(diff/3600000)).padStart(2, '0');
-                    const m = String(Math.floor((diff%3600000)/60000)).padStart(2, '0');
-                    const s = String(Math.floor((diff%60000)/1000)).padStart(2, '0');
-                    el.innerText = `${h}:${m}:${s}`;
+                
+                if(diff <= 0 || !el) {
+                    clearInterval(interval);
+                    renderFarm();
+                } else {
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    if(d > 0) el.innerText = `${d}d ${h}h ${m}m`;
+                    else el.innerText = `${h}h ${m}m ${s}s`;
                 }
             }, 1000);
         }
 
-        function buyPlot(id) {
-            if(uData.bal >= COST) {
-                db.ref('users/'+uid).update({ bal: uData.bal - COST });
-                db.ref('users/'+uid+'/farm/'+id).set({ end: Date.now() + GROW_TIME });
-            } else { if(tg && tg.showAlert) tg.showAlert("Insufficient TON!"); }
+        function harvest(slotId, reward) {
+            tg.HapticFeedback.impactOccurred('heavy');
+            db.ref('users/' + uid).update({ bal: uData.bal + reward });
+            db.ref('users/' + uid + '/farm/' + slotId).remove();
         }
 
-        function claimPlot(id) {
-            db.ref('users/'+uid).update({ bal: uData.bal + PROFIT });
-            db.ref('users/'+uid+'/farm/'+id).remove(); 
+        // ==========================================
+        // REAL TON DEPOSIT & PLAN BUYING
+        // ==========================================
+        function openPlanModal(slotId) {
+            selectedSlot = slotId;
+            // Reset selection
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('btn-buy-plan').disabled = true;
+            openModal('planModal');
         }
 
-        // 8. Withdraw System
-        function requestWithdraw() {
-            const amt = document.getElementById('w-amt').value;
-            if(tonConnectUI && !tonConnectUI.connected) {
-                if(tg && tg.showAlert) tg.showAlert("Connect wallet from top header first!");
-                return;
-            }
-            if(uData.ads < 10) return tg.showAlert ? tg.showAlert("Watch 10 Ads first!") : alert("Watch 10 Ads first!");
-            if(amt < 1 || amt > uData.bal) return tg.showAlert ? tg.showAlert("Invalid Amount!") : alert("Invalid Amount!");
+        function selectPlan(days, cost, reward) {
+            selectedPlan = { days, cost, reward };
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('plan-' + days).classList.add('active');
+            document.getElementById('btn-buy-plan').disabled = false;
+        }
+
+        async function executePlanBuy() {
+            if(!tonUI.connected) return tg.showAlert("Please connect your TON wallet first!");
+            if(!selectedPlan || !selectedSlot) return;
+
+            const nanoTon = selectedPlan.cost * 1000000000; // Convert TON to NanoTON
             
-            db.ref('users/'+uid).update({ wStatus: 'pending', wAmt: amt });
-            if(tg && tg.showAlert) tg.showAlert("Request Sent! Admin will verify soon.");
-            closeModal('withdrawModal');
+            const transaction = {
+                validUntil: Math.floor(Date.now() / 1000) + 360,
+                messages: [
+                    {
+                        address: ADMIN_WALLET, // Send to Admin Wallet
+                        amount: nanoTon.toString()
+                    }
+                ]
+            };
+
+            try {
+                closeModal('planModal');
+                tg.showAlert("Approve transaction in your wallet...");
+                
+                const result = await tonUI.sendTransaction(transaction);
+                
+                if(result) {
+                    // Transaction Success - Add to Firebase
+                    const endTime = Date.now() + (selectedPlan.days * 24 * 60 * 60 * 1000);
+                    db.ref('users/' + uid + '/farm/' + selectedSlot).set({
+                        end: endTime,
+                        reward: selectedPlan.reward,
+                        cost: selectedPlan.cost
+                    });
+                    tg.showAlert(`✅ Success! Plot unlocked for ${selectedPlan.days} days.`);
+                }
+            } catch (error) {
+                console.error(error);
+                tg.showAlert("❌ Transaction failed or cancelled.");
+            }
         }
 
-        function updateWithdrawUI(status) {
-            const box = document.getElementById('w-status-box');
-            if(!status) { box.style.display = 'none'; return; }
-            box.style.display = 'block';
-            if(status === 'pending') { box.style.background = '#ff980033'; box.style.color = '#ff9800'; box.style.borderColor = '#ff9800'; box.innerHTML = "⏳ Status: Pending Admin Approval"; }
-            else if(status === 'approved') { box.style.background = '#4caf5033'; box.style.color = '#4caf50'; box.style.borderColor = '#4caf50'; box.innerHTML = "✅ Status: Withdraw Approved!"; }
-            else if(status === 'rejected') { box.style.background = '#f4433633'; box.style.color = '#f44336'; box.style.borderColor = '#f44336'; box.innerHTML = "❌ Status: Withdraw Rejected!"; }
-        }
-
-        // 9. Extra Features (Ads, Refer, Language, Music)
+        // ==========================================
+        // ADS SYSTEM FIX
+        // ==========================================
         async function watchAd() {
-            if(!AdController) { if(tg && tg.showAlert) tg.showAlert("Ads loading..."); return; }
-            try { 
-                await AdController.show(); 
-                db.ref('users/'+uid).update({ ads: (uData.ads || 0) + 1 });
-            } catch(e) { console.log(e); }
+            if(!Ads) return tg.showAlert("Ads system is initializing. Please wait.");
+            
+            try {
+                const promise = Ads.show();
+                
+                promise.then(() => {
+                    // Ad finished successfully
+                    db.ref('users/' + uid).update({ ads: (uData.ads || 0) + 1 });
+                    tg.showAlert("✅ Ad completed! Task progress updated.");
+                }).catch((e) => {
+                    // Ad failed (e.g. adblock, no fill, user closed)
+                    console.log("Ad error:", e);
+                    tg.showAlert("❌ Ad failed to load. Please disable AdBlock or try again later.");
+                });
+                
+            } catch(e) {
+                tg.showAlert("❌ Ads currently unavailable for your region.");
+            }
         }
 
-        function copyRef() {
-            const link = `https://t.me/YourBot_bot?start=${uid}`;
-            if(tg && tg.openTelegramLink) tg.openTelegramLink(`https://t.me/share/url?url=${link}&text=Join My Full Moon Farm!`);
+        // ==========================================
+        // WITHDRAWAL SYSTEM
+        // ==========================================
+        function openWithdraw() {
+            if(uData.wStatus === 'pending') {
+                return tg.showAlert("You already have a pending withdrawal request.");
+            }
+            openModal('wModal');
         }
 
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function submitWithdraw() {
+            const amt = parseFloat(document.getElementById('w-amt').value);
+            
+            if(!tonUI.connected) return tg.showAlert("Connect your wallet first!");
+            if(uData.ads < 10) return tg.showAlert("Watch 10 Ads first!");
+            if(isNaN(amt) || amt < MIN_WITHDRAW) return tg.showAlert(`Minimum withdrawal is ${MIN_WITHDRAW} TON!`);
+            if(amt > uData.bal) return tg.showAlert("Insufficient balance!");
+
+            // Send to Admin
+            db.ref('users/' + uid).update({
+                bal: uData.bal - amt,
+                wStatus: 'pending',
+                wAmt: amt,
+                wallet: tonUI.account.address
+            });
+
+            closeModal('wModal');
+            tg.showAlert("✅ Withdrawal request sent to Admin!");
+        }
+
+        // ==========================================
+        // ADMIN PANEL & TELEGRAM BOT SMS
+        // ==========================================
+        function openAdminPanel() {
+            const list = document.getElementById('admin-list');
+            list.innerHTML = "Fetching...";
+            
+            db.ref('users').on('value', snap => {
+                const users = snap.val();
+                list.innerHTML = "";
+                let count = 0;
+                
+                for(let targetUid in users) {
+                    const u = users[targetUid];
+                    if(u.wStatus === 'pending') {
+                        count++;
+                        const card = document.createElement('div');
+                        card.className = 'req-card';
+                        card.innerHTML = `
+                            <b>User ID:</b> ${targetUid}<br>
+                            <b>Name:</b> ${u.name || 'Unknown'}<br>
+                            <b>Amount:</b> <span style="color:#4CAF50">${u.wAmt} TON</span><br>
+                            <b>Wallet:</b> <span style="font-size:11px; word-break:break-all;">${u.wallet}</span>
+                            <div class="req-actions">
+                                <button class="btn-approve" onclick="adminAction('${targetUid}', 'approved', ${u.wAmt})">Approve</button>
+                                <button class="btn-reject" onclick="adminAction('${targetUid}', 'rejected', ${u.wAmt})">Reject</button>
+                            </div>
+                        `;
+                        list.appendChild(card);
+                    }
+                }
+                if(count === 0) list.innerHTML = "<p>No pending requests.</p>";
+            });
+        }
+
+        // This function triggers the Bot SMS
+        function sendBotSMS(targetUid, status, amount) {
+            let message = "";
+            if(status === 'approved') {
+                message = `✅ Your withdrawal of ${amount} TON has been processed and Approved! Check your wallet.`;
+            } else {
+                message = `❌ Admin rejected your withdrawal of ${amount} TON.`;
+            }
+            
+            // Telegram Bot API URL
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${targetUid}&text=${encodeURIComponent(message)}`;
+            
+            fetch(url).then(res => console.log("Bot SMS Sent")).catch(e => console.error("SMS Error", e));
+        }
+
+        function adminAction(targetUid, status, amount) {
+            if(confirm(`Are you sure you want to ${status} this request?`)) {
+                
+                // 1. Update Firebase Status
+                db.ref('users/' + targetUid).update({ wStatus: status });
+                
+                // 2. If rejected, refund balance (optional, based on your logic. I'm doing it to be fair)
+                if(status === 'rejected') {
+                    db.ref('users/' + targetUid + '/bal').transaction(currentBal => (currentBal || 0) + amount);
+                }
+
+                // 3. Send Bot SMS directly to user's Telegram chat!
+                sendBotSMS(targetUid, status, amount);
+                
+                tg.HapticFeedback.notificationOccurred(status === 'approved' ? 'success' : 'error');
+            }
+        }
+
+        // ==========================================
+        // UTILITIES (Modals, Refer, Music, Lang)
+        // ==========================================
+        function openModal(id) {
+            if(id === 'adminModal') openAdminPanel();
+            document.getElementById(id).style.display = 'flex';
+        }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        function toggleMusic() {
-            const bgm = document.getElementById('bgMusic');
-            uData.music = !uData.music;
-            if(uData.music) { bgm.play(); document.getElementById('musicBtn').innerText = "🔊 Music: ON"; }
-            else { bgm.pause(); document.getElementById('musicBtn').innerText = "🔊 Music: OFF"; }
+        
+        function copyReferral() {
+            const link = `https://t.me/share/url?url=https://t.me/YourBotUsername?start=${uid}`;
+            tg.openTelegramLink(link);
         }
+
+        // Audio System
+        function initAppAudio() {
+            if(!audioStarted) {
+                const bgm = document.getElementById('bgMusic');
+                bgm.play().catch(()=>{});
+                bgm.muted = !uData.music;
+                audioStarted = true;
+            }
+        }
+        function toggleMusic() {
+            uData.music = !uData.music;
+            db.ref('users/' + uid).update({ music: uData.music });
+            document.getElementById('bgMusic').muted = !uData.music;
+            updateMusicUI();
+        }
+        function updateMusicUI() {
+            const btn = document.getElementById('music-status');
+            if(uData.music) { btn.innerText = "ON 🔊"; btn.style.color = "#4CAF50"; }
+            else { btn.innerText = "OFF 🔇"; btn.style.color = "#F44336"; }
+        }
+
+        // Language System (6 Languages)
+        const dict = {
+            en: { w: "Withdraw", t: "Tasks", a: "Ads", r: "Refer", load: "Loading Farm System...", sel: "Select Plan", set: "Settings" },
+            bn: { w: "উইথড্র", t: "টাস্ক", a: "অ্যাড", r: "রেফার", load: "খামার লোড হচ্ছে...", sel: "প্ল্যান বাছুন", set: "সেটিংস" },
+            ru: { w: "Вывод", t: "Задачи", a: "Реклама", r: "Реферал", load: "Загрузка фермы...", sel: "Выбор плана", set: "Настройки" },
+            hi: { w: "निकासी", t: "कार्य", a: "विज्ञापन", r: "रेफर", load: "फार्म लोड हो रहा है...", sel: "प्लान चुनें", set: "सेटिंग्स" },
+            ja: { w: "撤退", t: "タスク", a: "広告", r: "紹介", load: "農場を読み込んでいます...", sel: "プランを選択", set: "設定" },
+            de: { w: "Auszahlen", t: "Aufgaben", a: "Anzeigen", r: "Einladen", load: "Farm wird geladen...", sel: "Plan wählen", set: "Einst." }
+        };
 
         function changeLang(l) {
-            db.ref('users/'+uid).update({ lang: l });
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            db.ref('users/' + uid).update({ lang: l });
+            applyLanguage(l);
+            tg.HapticFeedback.selectionChanged();
         }
 
-        function updateLangText(l) {
-            if(!dict[l]) return;
-            document.getElementById('t-loading').innerText = dict[l].load;
-            document.getElementById('t-withdraw').innerText = dict[l].w;
-            document.getElementById('t-tasks').innerText = dict[l].t;
-            document.getElementById('t-ads').childNodes[0].nodeValue = dict[l].a + " (";
-            document.getElementById('t-ref').innerText = dict[l].r;
-            document.getElementById('t-farm-title').innerText = dict[l].fTitle;
+        function applyLanguage(l) {
+            const d = dict[l] || dict['en'];
+            document.getElementById('t-w').innerText = d.w;
+            document.getElementById('t-t').innerText = d.t;
+            document.getElementById('t-a').innerText = d.a;
+            document.getElementById('t-r').innerText = d.r;
+            document.getElementById('t-loading').innerText = d.load;
+            document.getElementById('t-select-plan').innerText = d.sel;
+            document.getElementById('t-withdraw').innerText = d.w;
+            document.getElementById('t-settings').innerText = d.set;
+
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('lang-' + l);
+            if(btn) btn.classList.add('active');
         }
     </script>
 </body>

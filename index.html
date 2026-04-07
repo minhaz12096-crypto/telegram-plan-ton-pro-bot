@@ -305,9 +305,11 @@
             db.ref('users/'+targetId).update({ wStatus: status });
             if(status === 'rejected') db.ref('users/'+targetId+'/bal').transaction(b => (b||0) + amt); // Refund if rejected
 
-            const msg = status === 'approved' 
-                ? `✅ Congratulations! Your withdraw of ${amt} TON has been APPROVED and sent to your wallet.` 
-                : `❌ Notice: Your withdraw of ${amt} TON has been REJECTED. Please check your minimum balance.`;
+            const msg = status === 'approved'{
+                msg = `🎊 **Withdrawal Successful!** 🎊\n\n✅ **Congratulations!**\nYour withdrawal request has been **APPROVED**.\n\n💰 **Amount:** ${amt} TON\n👛 **Wallet Address:** ${walletAddress}\n⏰ **Time:** ${currentTime}\n📜 **Status:** Sent to your wallet\n\nThank you for being with **Plant Ton Pro**! 🌿`;
+            } else {
+                msg = `⚠️ **Withdrawal Notice** ⚠️\n\n❌ **Transaction Rejected**\nWe're sorry! Your withdrawal request has been **REJECTED**.\n\n💰 **Amount:** ${amt} TON\n👛 **Target Wallet:** ${walletAddress}\n⏰ **Time:** ${currentTime}\n📅 **Date:** ${currentDate}\n\n📌 **Reason:** Insufficient minimum balance or security verification failed. Please ensure you have reached the withdrawal limit.\n\n💡 **What to do?**\nCheck your balance and try again. If you have any questions, contact our **Support Group**.\n\n🌿 Keep planting to earn more!`;
+            }
             
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${targetId}&text=${encodeURIComponent(msg)}`);
             tg.showAlert(`SMS sent to user!`);

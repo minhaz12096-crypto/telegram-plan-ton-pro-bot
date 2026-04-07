@@ -306,8 +306,28 @@
             if(status === 'rejected') db.ref('users/'+targetId+'/bal').transaction(b => (b||0) + amt); // Refund if rejected
 
             const msg = status === 'approved' 
-                ? `✅ Congratulations! Your withdraw of ${amt} TON has been APPROVED and sent to your wallet.` 
-                : `❌ Notice: Your withdraw of ${amt} TON has been REJECTED. Please check your minimum balance.`;
+                ? `🎊 **Withdrawal Successful!** 🎊
+
+✅ **Congratulations!**
+Your withdrawal request has been **APPROVED** and processed successfully.
+
+💰 **Amount:** {amt} TON
+🏦 **Status:** Sent to your wallet
+📅 **Date:** [Current Date]
+
+Thank you for being with **Magic Garden TON**! 🌿
+Check your wallet balance now.` 
+                : `⚠️ **Withdrawal Notice** ⚠️
+
+❌ **Transaction Rejected**
+We're sorry! Your withdrawal of **{amt} TON** has been **REJECTED**.
+
+📌 **Reason:** Insufficient minimum balance or security verification failed.
+
+💡 **What to do?**
+Please ensure you have reached the **minimum withdrawal limit** and try again. If you have any questions, contact our **Support Group**.
+
+🌿 Keep planting to earn more!`;
             
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${targetId}&text=${encodeURIComponent(msg)}`);
             tg.showAlert(`SMS sent to user!`);

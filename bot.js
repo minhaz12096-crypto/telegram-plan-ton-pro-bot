@@ -1,7 +1,7 @@
 const { Telegraf, Markup } = require('telegraf');
 // Apnar Bot Token r Admin ID ekhane diben
-const bot = new Telegraf('YOUR_BOT_TOKEN');
-const ADMIN_ID = 'YOUR_ADMIN_CHAT_ID'; // Admin er Telegram User ID
+const bot = new Telegraf('7956497373:AAFdqSrJkFywUlIxKbll25aZkg3e6tURfpE');
+const ADMIN_ID = '8514470262'; // Admin er Telegram User ID
 
 // Real Task Check (API diye Channel e join ache kina)
 async function checkMembership(ctx, channelUsername) {

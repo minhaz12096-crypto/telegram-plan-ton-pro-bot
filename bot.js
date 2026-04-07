@@ -1,7 +1,7 @@
 const { Telegraf } = require('telegraf');
 
 // আপনার বটের টোকেন দিন
-const bot = new Telegraf('YOUR_BOT_TOKEN_HERE'); 
+const bot = new Telegraf('8613002021:AAE7pB-Pf8CtiUtGq1Z2PqxkKAB61hSCXB0'); 
 
 // আপনার টেলিগ্রাম ইউজার আইডি (শুধুমাত্র আপনি অ্যাডমিন হবেন)
 const ADMIN_ID = 8514470262; 

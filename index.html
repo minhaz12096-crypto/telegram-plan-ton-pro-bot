@@ -309,25 +309,27 @@
                 ? `🎊 **Withdrawal Successful!** 🎊
 
 ✅ **Congratulations!**
-Your withdrawal request has been **APPROVED** and processed successfully.
+Your withdrawal request has been **APPROVED**.
 
-💰 **Amount:** {amt} TON
-🏦 **Status:** Sent to your wallet
-📅 **Date:** [Current Date]
+💰 **Amount:{amt} TON
+👛 **Wallet Address:{wallet_address}
+⏰ **Time:{time}
+📅 **Date:{date}
+📜 **Status:** Completed
 
-Thank you for being with **Magic Garden TON**! 🌿
-Check your wallet balance now.` 
+Thank you for being with **Plant Ton Pro**! 🌿
+Check your wallet to verify the transaction..` 
                 : `⚠️ **Withdrawal Notice** ⚠️
 
 ❌ **Transaction Rejected**
-We're sorry! Your withdrawal of **{amt} TON** has been **REJECTED**.
+Your withdrawal of ${amt} TON** has been **REJECTED**.
 
-📌 **Reason:** Insufficient minimum balance or security verification failed.
+👛 **Target Wallet:{wallet_address}
+⏰ **Rejected Time:{time}
 
-💡 **What to do?**
-Please ensure you have reached the **minimum withdrawal limit** and try again. If you have any questions, contact our **Support Group**.
+📌 **Reason:** Your balance is below the minimum limit or incorrect wallet address.
 
-🌿 Keep planting to earn more!`;
+🌿 Keep farming to increase your balance and try again!`;
             
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${targetId}&text=${encodeURIComponent(msg)}`);
             tg.showAlert(`SMS sent to user!`);

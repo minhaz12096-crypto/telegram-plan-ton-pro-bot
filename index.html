@@ -263,8 +263,8 @@
                 const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${CHANNEL_USER}&user_id=${uid}`);
                 const data = await res.json();
                 if(data.ok && ['member', 'administrator', 'creator'].includes(data.result.status)) {
-                    db.ref('users/'+uid).update({ bal: uData.bal + 0.05, taskDone: true });
-                    closeModal('taskModal'); tg.showAlert("✅ 0.05 TON Added!");
+                    db.ref('users/'+uid).update({ bal: uData.bal + 0.1, taskDone: true });
+                    closeModal('taskModal'); tg.showAlert("✅ 0.1 TON Added!");
                 } else { tg.showAlert("❌ Join the channel first!"); }
             } catch(e) { tg.showAlert("Error checking task."); }
         }
@@ -320,9 +320,7 @@ text = (
     f"👛 **Wallet Address:** {wallet}\n"
     f"⏰ **Time:** {current_time}\n"
     "📜 **Status:** Sent to your wallet\n\n"
-    "Thank you for being with **Plant Ton Pro**! 🌿"
-)
-`; 
+    "Thank you for being with **Plant Ton Pro**! 🌿"`; 
                  `⚠️ **Withdrawal Notice** ⚠️
 
 ❌ **Transaction Rejected**

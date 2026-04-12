@@ -1,489 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>File Creator Bot</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Link Generator</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script src="//libtl.com/sdk.js" data-zone="10803234" data-sdk="show_10803234"></script>
+    
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    
+    <script src="https://ad.gigapub.tech/script?id=6150"></script>
 
-<script>
-  // ════════════════════════════════════════
-  //  BLOCK ALL alert / confirm / prompt
-  //  so Adsgram errors are NEVER visible
-  // ════════════════════════════════════════
-  window.alert   = function() {};
-  window.confirm = function() { return true; };
-  window.prompt  = function() { return ""; };
-  
-</script>
-<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-  
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f2f2f7;
-    color: #111;
-    min-height: 100vh;
-    padding-bottom: 40px;
-  }
-
-  .topbar {
-    background: #fff;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    border-bottom: 1px solid #e0e0e0;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-  .topbar-logo {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg,#1a73e8,#7c5af7);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-  .topbar-name {
-    font-size: 17px;
-    font-weight: 700;
-    color: #1a73e8;
-  }
-
-  .form-wrap {
-    padding: 18px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-
-  .field-label {
-    font-size: 15px;
-    font-weight: 700;
-    color: #111;
-    margin-bottom: 8px;
-  }
-
-  .name-row {
-    display: flex;
-    align-items: center;
-    border: 1.5px solid #ccc;
-    border-radius: 10px;
-    background: #fff;
-    overflow: hidden;
-  }
-  .name-row:focus-within { border-color: #1a73e8; }
-  .name-row input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 15px;
-    padding: 13px 14px;
-    background: transparent;
-    color: #111;
-  }
-  .name-row input::placeholder { color: #aaa; }
-  .ext-tag {
-    padding: 0 14px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #111;
-    background: #f2f2f7;
-    border-left: 1.5px solid #ccc;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-  }
-
-  .select-wrap { position: relative; }
-  .select-wrap select {
-    width: 100%;
-    appearance: none;
-    -webkit-appearance: none;
-    border: 1.5px solid #1a73e8;
-    border-radius: 10px;
-    background: #fff;
-    color: #111;
-    font-size: 15px;
-    padding: 13px 44px 13px 14px;
-    outline: none;
-    cursor: pointer;
-  }
-  .select-wrap::after {
-    content: '▾';
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: #555;
-    pointer-events: none;
-  }
-
-  .content-box {
-    width: 100%;
-    border: 1.5px solid #ccc;
-    border-radius: 10px;
-    background: #fff;
-    color: #111;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    line-height: 1.6;
-    padding: 13px 14px;
-    resize: vertical;
-    min-height: 180px;
-    outline: none;
-    transition: border-color .2s;
-  }
-  .content-box:focus { border-color: #1a73e8; }
-  .content-box::placeholder { color: #aaa; font-family: 'Segoe UI', Arial, sans-serif; }
-
-  .ads-notice {
-    background: #fff8e1;
-    border: 1px solid #ffe082;
-    border-radius: 10px;
-    padding: 11px 14px;
-    font-size: 13px;
-    color: #795548;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .convert-btn {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 10px;
-    background: #1a73e8;
-    color: #fff;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: background .2s, transform .1s;
-    box-shadow: 0 2px 8px rgba(26,115,232,.25);
-  }
-  .convert-btn:active   { background: #1558b0; transform: scale(.99); }
-  .convert-btn:disabled { background: #90baf9; cursor: not-allowed; }
-
-  /* Ad overlay */
-  #adOverlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.55);
-    z-index: 999;
-    align-items: flex-end;
-    justify-content: center;
-  }
-  #adOverlay.active { display: flex; }
-
-  .ad-sheet {
-    background: #fff;
-    border-radius: 20px 20px 0 0;
-    padding: 28px 24px 36px;
-    width: 100%;
-    max-width: 480px;
-    text-align: center;
-    animation: slideUp .3s ease;
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0); }
-  }
-
-  .ad-icon  { font-size: 46px; margin-bottom: 12px; }
-  .ad-sheet h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; color: #111; }
-  .ad-sheet p  { font-size: 13px; color: #666; margin-bottom: 22px; line-height: 1.6; }
-
-  .ring-wrap {
-    position: relative;
-    width: 68px; height: 68px;
-    margin: 0 auto 12px;
-  }
-  .ring-svg   { width: 68px; height: 68px; transform: rotate(-90deg); }
-  .ring-track { fill: none; stroke: #e0e0e0; stroke-width: 5; }
-  .ring-fill  {
-    fill: none;
-    stroke: #1a73e8;
-    stroke-width: 5;
-    stroke-linecap: round;
-    stroke-dasharray: 175.9;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 1s linear, stroke .3s;
-  }
-  .ring-num {
-    position: absolute;
-    inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 21px; font-weight: 700; color: #111;
-  }
-
-  #adStatusText { font-size: 13px; color: #888; margin-bottom: 14px; }
-
-  .done-btn {
-    width: 100%;
-    padding: 13px;
-    border: none;
-    border-radius: 10px;
-    background: #22c55e;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    display: none;
-  }
-  .done-btn:active { opacity: .85; }
-
-  #toast {
-    position: fixed;
-    bottom: 26px; left: 50%;
-    transform: translateX(-50%) translateY(70px);
-    background: #22c55e;
-    color: #fff;
-    padding: 11px 22px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    transition: transform .3s;
-    z-index: 9999;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-  #toast.show  { transform: translateX(-50%) translateY(0); }
-  #toast.error { background: #ef4444; }
-</style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #1e1e1e);
+            color: var(--tg-theme-text-color, #ffffff);
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h2 { text-align: center; color: var(--tg-theme-button-color, #3390ec); }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
+            color: var(--tg-theme-text-color, #ffffff);
+            font-size: 16px;
+        }
+        button.generate-btn {
+            padding: 12px;
+            background-color: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .results {
+            display: none;
+            background: var(--tg-theme-secondary-bg-color, #2c2c2c);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .link-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #444;
+        }
+        .link-item:last-child { border-bottom: none; }
+        .link-title { font-weight: bold; margin-bottom: 5px; display: block; }
+        .link-url {
+            word-break: break-all;
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .copy-btn { background-color: #4CAF50; color: white; }
+        .download-btn { background-color: #ff9800; color: white; }
+        
+        /* Loading Overlay for Ad Process */
+        #adOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 18px;
+            text-align: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #3390ec;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar-logo">📁</div>
-  <div class="topbar-name">File Creator Bot</div>
-</div>
+    <div class="container">
+        <h2>Media Finder App</h2>
+        
+        <div class="input-group">
+            <input type="text" id="searchInput" placeholder="Enter image, video, or photo name...">
+            <button class="generate-btn" onclick="generateLinks()">Search & Generate Links</button>
+        </div>
 
-<div class="form-wrap">
+        <div class="results" id="resultsContainer">
+            <div class="link-item">
+                <span class="link-title">1. Direct Link</span>
+                <div class="link-url" id="link-direct">waiting...</div>
+                <div class="action-buttons">
+                    <button class="action-btn copy-btn" onclick="handleAction('copy', 'link-direct')">Copy</button>
+                </div>
+            </div>
+            
+            <div class="link-item">
+                <span class="link-title">2. .PNG Link</span>
+                <div class="link-url" id="link-png">waiting...</div>
+                <div class="action-buttons">
+                    <button class="action-btn copy-btn" onclick="handleAction('copy', 'link-png')">Copy</button>
+                    <button class="action-btn download-btn" onclick="handleAction('download', 'link-png')">Download</button>
+                </div>
+            </div>
 
-  <div>
-    <div class="field-label">File Name:</div>
-    <div class="name-row">
-      <input type="text" id="fileName" placeholder="Enter file name" autocomplete="off" spellcheck="false">
-      <div class="ext-tag" id="extTag">.html</div>
-    </div>
-  </div>
+            <div class="link-item">
+                <span class="link-title">3. MP4 Link</span>
+                <div class="link-url" id="link-mp4">waiting...</div>
+                <div class="action-buttons">
+                    <button class="action-btn copy-btn" onclick="handleAction('copy', 'link-mp4')">Copy</button>
+                    <button class="action-btn download-btn" onclick="handleAction('download', 'link-mp4')">Download</button>
+                </div>
+            </div>
 
-  <div>
-    <div class="field-label">File Type:</div>
-    <div class="select-wrap">
-      <select id="fileType" onchange="onTypeChange()">
-        <option value="html">HTML File (.html)</option>
-        <option value="css">CSS File (.css)</option>
-        <option value="js">JavaScript File (.js)</option>
-        <option value="py">Python File (.py)</option>
-        <option value="json">JSON File (.json)</option>
-        <option value="xml">XML File (.xml)</option>
-        <option value="svg">SVG File (.svg)</option>
-        <option value="php">PHP File (.php)</option>
-        <option value="sql">SQL File (.sql)</option>
-        <option value="txt">Text File (.txt)</option>
-        <option value="md">Markdown File (.md)</option>
-        <option value="sh">Shell File (.sh)</option>
-      </select>
-    </div>
-  </div>
-
-  <div>
-    <div class="field-label">File Content:</div>
-    <textarea class="content-box" id="fileContent"
-      placeholder="Enter your code or content here..."></textarea>
-  </div>
-
-  <div class="ads-notice">
-    📢 A short ad will appear before your file is created.
-  </div>
-
-  <button class="convert-btn" id="createBtn" onclick="startAdFlow()">
-    📄➤ &nbsp;Create File
-  </button>
-
-</div>
-
-<!-- Ad Overlay -->
-<div id="adOverlay">
-  <div class="ad-sheet">
-    <div class="ad-icon">📢</div>
-    <h3>Short Ad Playing</h3>
-    <p>Your file will be created automatically<br>right after the ad finishes.</p>
-
-    <div class="ring-wrap">
-      <svg class="ring-svg" viewBox="0 0 68 68">
-        <circle class="ring-track" cx="34" cy="34" r="28"/>
-        <circle class="ring-fill" id="ringFill" cx="34" cy="34" r="28"/>
-      </svg>
-      <div class="ring-num" id="ringNum">5</div>
+            <div class="link-item">
+                <span class="link-title">4. General Download Link</span>
+                <div class="link-url" id="link-dl">waiting...</div>
+                <div class="action-buttons">
+                    <button class="action-btn copy-btn" onclick="handleAction('copy', 'link-dl')">Copy</button>
+                    <button class="action-btn download-btn" onclick="handleAction('download', 'link-dl')">Download</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="adStatusText">Loading ad...</div>
-    <button class="done-btn" id="doneBtn" onclick="finishAd()">✅ Continue → Create File</button>
-  </div>
-</div>
+    <div id="adOverlay">
+        <div class="spinner"></div>
+        <div id="adMessage">Preparing links & loading sponsors...<br>Please wait a moment.</div>
+    </div>
 
-<div id="toast"></div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-<script>
-// ════════════════════════════════
-//  ★ PUT YOUR BLOCK ID HERE ★
-//  Example: "27419" or "int-12345"
-// ════════════════════════════════
-const ADSGRAM_BLOCK_ID = "27419";   // ← replace with your real Block ID
-const AD_SECONDS       = 5;
-const CIRCUMF          = 175.9;     // 2 * π * 28
+        // Updated URLs with the provided Image sites
+        const configUrls = {
+            withKeys: [
+                { url: "https://imagen.network/api/v1/", key: "API_KEY_1" },
+                { url: "https://yandex.ru/images/api/", key: "API_KEY_2" },
+                { url: "https://api.imagesite3.com/", key: "API_KEY_3" },
+                { url: "https://api.imagesite4.com/", key: "API_KEY_4" },
+                { url: "https://api.imagesite5.com/", key: "API_KEY_5" }
+            ],
+            withoutKeys: [
+                { url: "https://imagen.network/view/" },
+                { url: "https://yandex.ru/images/search/" },
+                { url: "https://genericsite3.com/media/" },
+                { url: "https://genericsite4.com/media/" },
+                { url: "https://genericsite5.com/media/" }
+            ]
+        };
 
-const tg     = window.Telegram?.WebApp;
-let adDone   = false;
-let timer    = null;
-let secsLeft = AD_SECONDS;
+        function generateLinks() {
+            const query = document.getElementById('searchInput').value.trim().replace(/\s+/g, '-');
+            if (!query) {
+                tg.showAlert("Please enter a name first.");
+                return;
+            }
 
-if (tg) { tg.ready(); tg.expand(); }
+            // Using the first setup (imagen.network & yandex examples)
+            const baseUrlWithKey = configUrls.withKeys[0].url;
+            const key = configUrls.withKeys[0].key;
+            const baseUrlWithoutKey = configUrls.withoutKeys[1].url;
 
-function onTypeChange() {
-  document.getElementById("extTag").textContent =
-    "." + document.getElementById("fileType").value;
-}
+            document.getElementById('link-direct').innerText = `${baseUrlWithoutKey}?text=${query}`;
+            document.getElementById('link-png').innerText = `${baseUrlWithKey}search?q=${query}&format=png&apikey=${key}`;
+            document.getElementById('link-mp4').innerText = `${baseUrlWithKey}search?q=${query}&format=mp4&apikey=${key}`;
+            document.getElementById('link-dl').innerText = `https://imagen.network/download/${query}`;
 
-function showToast(msg, isError) {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.className = "show" + (isError ? " error" : "");
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.className = "", 3200);
-}
+            document.getElementById('resultsContainer').style.display = 'block';
+        }
 
-function validate() {
-  if (!document.getElementById("fileName").value.trim())
-    return showToast("⚠️ Please enter a file name!", true), false;
-  if (!document.getElementById("fileContent").value.trim())
-    return showToast("⚠️ Please enter file content!", true), false;
-  return true;
-}
+        // ==========================================
+        // ADVERTISEMENT SYSTEM
+        // ==========================================
 
-function setRing(s) {
-  const offset = CIRCUMF * (1 - s / AD_SECONDS);
-  const ring   = document.getElementById("ringFill");
-  ring.style.strokeDashoffset = offset;
-  ring.style.stroke = s > 1 ? "#1a73e8" : "#22c55e";
-  document.getElementById("ringNum").textContent = s;
-}
+        async function triggerThreeAds() {
+            const adOverlay = document.getElementById('adOverlay');
+            adOverlay.style.display = 'flex';
+            
+            try {
+                // 1. Trigger Monetag (using the function from the data-sdk attribute)
+                if (typeof show_10803234 === 'function') {
+                    console.log("Triggering Monetag...");
+                    try { await show_10803234(); } catch(e) { console.log("Monetag skipped/blocked"); }
+                }
 
-// Fallback countdown — silent, no errors shown
-function startCountdown() {
-  secsLeft = AD_SECONDS;
-  setRing(secsLeft);
-  document.getElementById("adStatusText").textContent = "Please wait...";
-  document.getElementById("doneBtn").style.display = "none";
-  clearInterval(timer);
+                // 2. Trigger Adsgram (Block ID: 26272)
+                if (window.Adsgram) {
+                    console.log("Triggering Adsgram...");
+                    const AdController = window.Adsgram.init({ blockId: "26272" });
+                    try { 
+                        await AdController.show(); 
+                    } catch(e) { 
+                        console.log("Adsgram skipped/blocked"); 
+                    }
+                }
 
-  timer = setInterval(() => {
-    secsLeft--;
-    setRing(secsLeft);
-    if (secsLeft <= 0) {
-      clearInterval(timer); timer = null;
-      document.getElementById("adStatusText").textContent = "✅ Creating your file...";
-      document.getElementById("doneBtn").style.display = "block";
-      setTimeout(() => finishAd(), 900);
-    }
-  }, 1000);
-}
+                // 3. Gigapub is auto-loaded via the script tag in head.
+                // We just add a small delay to ensure visibility / tracking.
+                console.log("Processing Gigapub...");
+                await new Promise(resolve => setTimeout(resolve, 1500));
 
-function startAdFlow() {
-  if (!validate()) return;
-  adDone = false;
+            } catch (error) {
+                console.error("Ad sequence error", error);
+            } finally {
+                // Hide overlay after ad process finishes
+                adOverlay.style.display = 'none';
+            }
+        }
 
-  document.getElementById("adOverlay").classList.add("active");
-  document.getElementById("doneBtn").style.display  = "none";
-  document.getElementById("adStatusText").textContent = "Loading ad...";
-  setRing(AD_SECONDS);
+        async function handleAction(actionType, elementId) {
+            const linkText = document.getElementById(elementId).innerText;
+            if(linkText === "waiting...") return;
 
-  // Try Adsgram — any error silently falls back to countdown
-  if (window.Adsgram) {
-    try {
-      const ctrl = window.Adsgram.init({ blockId: String(ADSGRAM_BLOCK_ID) });
-      const p = ctrl.show ? ctrl.show() : ctrl;
-      Promise.resolve(p)
-        .then(() => {
-          clearInterval(timer);
-          document.getElementById("adStatusText").textContent = "✅ Ad complete!";
-          setTimeout(() => finishAd(), 700);
-        })
-        .catch(() => startCountdown()); // silent fallback
-    } catch (e) {
-      startCountdown();
-    }
-  } else {
-    startCountdown();
-  }
-}
+            // Trigger the 3 ads first
+            await triggerThreeAds();
 
-function finishAd() {
-  if (adDone) return;
-  adDone = true;
-  clearInterval(timer);
-  document.getElementById("adOverlay").classList.remove("active");
-  createFile();
-}
-
-function createFile() {
-  const rawName  = document.getElementById("fileName").value.trim();
-  const content  = document.getElementById("fileContent").value;
-  const ext      = document.getElementById("fileType").value;
-  const fullName = rawName.replace(/\.[^/.]+$/, "") + "." + ext;
-
-  const payload = JSON.stringify({
-    action:   "create_file",
-    fileName: fullName,
-    fileType: ext,
-    content:  content,
-    size:     new Blob([content]).size,
-    userId:   tg?.initDataUnsafe?.user?.id || "unknown"
-  });
-
-  if (tg && tg.sendData) {
-    try {
-      tg.sendData(payload);
-      showToast('✅ "' + fullName + '" sent to bot!');
-      setTimeout(() => {
-        document.getElementById("fileName").value    = "";
-        document.getElementById("fileContent").value = "";
-      }, 1200);
-    } catch (e) {
-      showToast('✅ "' + fullName + '" created!');
-    }
-  } else {
-    const blob = new Blob([content], { type: "text/plain" });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement("a");
-    a.href = url; a.download = fullName; a.click();
-    URL.revokeObjectURL(url);
-    showToast('✅ "' + fullName + '" downloaded!');
-  }
-}
-
-// Load Adsgram SDK silently
-(function () {
-  const s   = document.createElement("script");
-  s.src     = "https://sad.adsgram.ai/js/sad.min.js";
-  s.async   = true;
-  s.onerror = () => {};   // silent if CDN fails
-  document.head.appendChild(s);
-})();
-</script>
+            // Execute action after ads
+            if (actionType === 'copy') {
+                navigator.clipboard.writeText(linkText).then(() => {
+                    tg.showAlert("Link Copied Successfully!");
+                }).catch(err => {
+                    alert("Copy failed. Link: " + linkText);
+                });
+            } 
+            else if (actionType === 'download') {
+                tg.showAlert("Starting Download...");
+                window.open(linkText, '_blank');
+            }
+        }
+    </script>
 </body>
 </html>

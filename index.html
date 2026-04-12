@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>File Creator Bot</title>
+
+<script>
+  // ════════════════════════════════════════
+  //  BLOCK ALL alert / confirm / prompt
+  //  so Adsgram errors are NEVER visible
+  // ════════════════════════════════════════
+  window.alert   = function() {};
+  window.confirm = function() { return true; };
+  window.prompt  = function() { return ""; };
+</script>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,7 +27,6 @@
     padding-bottom: 40px;
   }
 
-  /* ── Top bar ── */
   .topbar {
     background: #fff;
     display: flex;
@@ -42,7 +52,6 @@
     color: #1a73e8;
   }
 
-  /* ── Form card ── */
   .form-wrap {
     padding: 18px 16px;
     display: flex;
@@ -57,7 +66,6 @@
     margin-bottom: 8px;
   }
 
-  /* File name row */
   .name-row {
     display: flex;
     align-items: center;
@@ -84,16 +92,13 @@
     color: #111;
     background: #f2f2f7;
     border-left: 1.5px solid #ccc;
-    height: 100%;
     min-height: 48px;
     display: flex;
     align-items: center;
+    white-space: nowrap;
   }
 
-  /* Dropdown */
-  .select-wrap {
-    position: relative;
-  }
+  .select-wrap { position: relative; }
   .select-wrap select {
     width: 100%;
     appearance: none;
@@ -118,7 +123,6 @@
     pointer-events: none;
   }
 
-  /* Textarea */
   .content-box {
     width: 100%;
     border: 1.5px solid #ccc;
@@ -137,7 +141,6 @@
   .content-box:focus { border-color: #1a73e8; }
   .content-box::placeholder { color: #aaa; font-family: 'Segoe UI', Arial, sans-serif; }
 
-  /* Ads notice */
   .ads-notice {
     background: #fff8e1;
     border: 1px solid #ffe082;
@@ -150,7 +153,6 @@
     gap: 8px;
   }
 
-  /* Convert button */
   .convert-btn {
     width: 100%;
     padding: 15px;
@@ -168,10 +170,10 @@
     transition: background .2s, transform .1s;
     box-shadow: 0 2px 8px rgba(26,115,232,.25);
   }
-  .convert-btn:active { background: #1558b0; transform: scale(.99); }
+  .convert-btn:active   { background: #1558b0; transform: scale(.99); }
   .convert-btn:disabled { background: #90baf9; cursor: not-allowed; }
 
-  /* ── Ad Overlay ── */
+  /* Ad overlay */
   #adOverlay {
     display: none;
     position: fixed;
@@ -197,11 +199,10 @@
     to   { transform: translateY(0); }
   }
 
-  .ad-icon { font-size: 46px; margin-bottom: 12px; }
+  .ad-icon  { font-size: 46px; margin-bottom: 12px; }
   .ad-sheet h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; color: #111; }
   .ad-sheet p  { font-size: 13px; color: #666; margin-bottom: 22px; line-height: 1.6; }
 
-  /* Ring */
   .ring-wrap {
     position: relative;
     width: 68px; height: 68px;
@@ -221,19 +222,11 @@
   .ring-num {
     position: absolute;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 21px;
-    font-weight: 700;
-    color: #111;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 21px; font-weight: 700; color: #111;
   }
 
-  #adStatusText {
-    font-size: 13px;
-    color: #888;
-    margin-bottom: 14px;
-  }
+  #adStatusText { font-size: 13px; color: #888; margin-bottom: 14px; }
 
   .done-btn {
     width: 100%;
@@ -249,7 +242,6 @@
   }
   .done-btn:active { opacity: .85; }
 
-  /* Toast */
   #toast {
     position: fixed;
     bottom: 26px; left: 50%;
@@ -271,7 +263,6 @@
 </head>
 <body>
 
-<!-- Top bar like Basic Touch Pro -->
 <div class="topbar">
   <div class="topbar-logo">📁</div>
   <div class="topbar-name">File Creator Bot</div>
@@ -279,7 +270,6 @@
 
 <div class="form-wrap">
 
-  <!-- File Name -->
   <div>
     <div class="field-label">File Name:</div>
     <div class="name-row">
@@ -288,7 +278,6 @@
     </div>
   </div>
 
-  <!-- File Type -->
   <div>
     <div class="field-label">File Type:</div>
     <div class="select-wrap">
@@ -309,30 +298,27 @@
     </div>
   </div>
 
-  <!-- File Content -->
   <div>
     <div class="field-label">File Content:</div>
     <textarea class="content-box" id="fileContent"
       placeholder="Enter your code or content here..."></textarea>
   </div>
 
-  <!-- Ads notice -->
   <div class="ads-notice">
     📢 A short ad will appear before your file is created.
   </div>
 
-  <!-- Button -->
   <button class="convert-btn" id="createBtn" onclick="startAdFlow()">
     📄➤ &nbsp;Create File
   </button>
 
 </div>
 
-<!-- Ad Sheet -->
+<!-- Ad Overlay -->
 <div id="adOverlay">
   <div class="ad-sheet">
     <div class="ad-icon">📢</div>
-    <h3>Watch a Short Ad</h3>
+    <h3>Short Ad Playing</h3>
     <p>Your file will be created automatically<br>right after the ad finishes.</p>
 
     <div class="ring-wrap">
@@ -351,27 +337,26 @@
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════
-//  CONFIG  ← change here
-// ═══════════════════════
-const ADSGRAM_BLOCK_ID = "int-25882"; // your real Block ID
+// ════════════════════════════════
+//  ★ PUT YOUR BLOCK ID HERE ★
+//  Example: "26539" or "int-12345"
+// ════════════════════════════════
+const ADSGRAM_BLOCK_ID = "26539";   // ← replace with your real Block ID
 const AD_SECONDS       = 5;
-const CIRCUMF          = 2 * Math.PI * 28; // r=28 → 175.9
+const CIRCUMF          = 175.9;     // 2 * π * 28
 
-const tg    = window.Telegram?.WebApp;
-let adDone  = false;
-let timer   = null;
-let secsLeft= AD_SECONDS;
+const tg     = window.Telegram?.WebApp;
+let adDone   = false;
+let timer    = null;
+let secsLeft = AD_SECONDS;
 
 if (tg) { tg.ready(); tg.expand(); }
 
-// Sync ext tag
 function onTypeChange() {
-  const ext = document.getElementById("fileType").value;
-  document.getElementById("extTag").textContent = "." + ext;
+  document.getElementById("extTag").textContent =
+    "." + document.getElementById("fileType").value;
 }
 
-// Toast
 function showToast(msg, isError) {
   const el = document.getElementById("toast");
   el.textContent = msg;
@@ -380,7 +365,6 @@ function showToast(msg, isError) {
   el._t = setTimeout(() => el.className = "", 3200);
 }
 
-// Validate
 function validate() {
   if (!document.getElementById("fileName").value.trim())
     return showToast("⚠️ Please enter a file name!", true), false;
@@ -389,7 +373,6 @@ function validate() {
   return true;
 }
 
-// Ring update
 function setRing(s) {
   const offset = CIRCUMF * (1 - s / AD_SECONDS);
   const ring   = document.getElementById("ringFill");
@@ -398,27 +381,26 @@ function setRing(s) {
   document.getElementById("ringNum").textContent = s;
 }
 
-// Fallback countdown — always works even if Adsgram errors
+// Fallback countdown — silent, no errors shown
 function startCountdown() {
   secsLeft = AD_SECONDS;
   setRing(secsLeft);
   document.getElementById("adStatusText").textContent = "Please wait...";
   document.getElementById("doneBtn").style.display = "none";
-
   clearInterval(timer);
+
   timer = setInterval(() => {
     secsLeft--;
     setRing(secsLeft);
     if (secsLeft <= 0) {
       clearInterval(timer); timer = null;
-      document.getElementById("adStatusText").textContent = "✅ Done! Creating your file...";
+      document.getElementById("adStatusText").textContent = "✅ Creating your file...";
       document.getElementById("doneBtn").style.display = "block";
-      setTimeout(() => finishAd(), 1000); // auto proceed
+      setTimeout(() => finishAd(), 900);
     }
   }, 1000);
 }
 
-// Start ad flow
 function startAdFlow() {
   if (!validate()) return;
   adDone = false;
@@ -428,30 +410,26 @@ function startAdFlow() {
   document.getElementById("adStatusText").textContent = "Loading ad...";
   setRing(AD_SECONDS);
 
+  // Try Adsgram — any error silently falls back to countdown
   if (window.Adsgram) {
     try {
-      window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID })
-        .show()
+      const ctrl = window.Adsgram.init({ blockId: String(ADSGRAM_BLOCK_ID) });
+      const p = ctrl.show ? ctrl.show() : ctrl;
+      Promise.resolve(p)
         .then(() => {
-          // Ad shown → finish
           clearInterval(timer);
           document.getElementById("adStatusText").textContent = "✅ Ad complete!";
           setTimeout(() => finishAd(), 700);
         })
-        .catch(() => {
-          // Adsgram error (wrong block id, no fill, etc.) → fallback
-          startCountdown();
-        });
+        .catch(() => startCountdown()); // silent fallback
     } catch (e) {
       startCountdown();
     }
   } else {
-    // SDK not loaded → fallback
     startCountdown();
   }
 }
 
-// Finish
 function finishAd() {
   if (adDone) return;
   adDone = true;
@@ -460,13 +438,11 @@ function finishAd() {
   createFile();
 }
 
-// Create file & send to bot
 function createFile() {
   const rawName  = document.getElementById("fileName").value.trim();
   const content  = document.getElementById("fileContent").value;
   const ext      = document.getElementById("fileType").value;
-  const baseName = rawName.replace(/\.[^/.]+$/, "");
-  const fullName = baseName + "." + ext;
+  const fullName = rawName.replace(/\.[^/.]+$/, "") + "." + ext;
 
   const payload = JSON.stringify({
     action:   "create_file",
@@ -480,31 +456,30 @@ function createFile() {
   if (tg && tg.sendData) {
     try {
       tg.sendData(payload);
-      showToast(`✅ "${fullName}" sent to bot!`);
+      showToast('✅ "' + fullName + '" sent to bot!');
       setTimeout(() => {
         document.getElementById("fileName").value    = "";
         document.getElementById("fileContent").value = "";
       }, 1200);
     } catch (e) {
-      showToast(`✅ "${fullName}" created!`);
+      showToast('✅ "' + fullName + '" created!');
     }
   } else {
-    // Dev mode → download
     const blob = new Blob([content], { type: "text/plain" });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement("a");
     a.href = url; a.download = fullName; a.click();
     URL.revokeObjectURL(url);
-    showToast(`✅ "${fullName}" downloaded!`);
+    showToast('✅ "' + fullName + '" downloaded!');
   }
 }
 
-// Load Adsgram SDK
+// Load Adsgram SDK silently
 (function () {
-  const s = document.createElement("script");
-  s.src   = "https://sad.adsgram.ai/js/sad.min.js";
-  s.async = true;
-  s.onerror = () => console.log("Adsgram SDK not loaded, fallback ready.");
+  const s   = document.createElement("script");
+  s.src     = "https://sad.adsgram.ai/js/sad.min.js";
+  s.async   = true;
+  s.onerror = () => {};   // silent if CDN fails
   document.head.appendChild(s);
 })();
 </script>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>File Creator Bot</title>
+<title>File Creator</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   :root {
@@ -17,22 +17,18 @@
     --muted: #7b8099;
     --input-bg: #13161f;
     --radius: 14px;
-    --shadow: 0 4px 24px rgba(79,142,247,0.10);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding: 0 0 30px 0;
+    padding-bottom: 30px;
   }
 
-  /* ── Header ── */
   .header {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
     padding: 22px 20px 18px;
     text-align: center;
     position: relative;
@@ -42,29 +38,27 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
-  .header-icon { font-size: 38px; margin-bottom: 6px; }
-  .header h1 { font-size: 20px; font-weight: 700; letter-spacing: .5px; }
-  .header p { font-size: 12px; opacity: .8; margin-top: 3px; }
+  .header-icon { font-size: 38px; margin-bottom: 6px; position: relative; }
+  .header h1   { font-size: 20px; font-weight: 700; position: relative; }
+  .header p    { font-size: 12px; opacity: .8; margin-top: 3px; position: relative; }
 
-  /* ── Main ── */
-  .main { padding: 20px 16px; display: flex; flex-direction: column; gap: 18px; }
+  .main { padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; }
 
   .card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 18px 16px;
-    box-shadow: var(--shadow);
+    padding: 16px;
   }
 
   label {
     display: block;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     color: var(--accent);
-    letter-spacing: .8px;
+    letter-spacing: 1px;
     text-transform: uppercase;
     margin-bottom: 8px;
   }
@@ -95,34 +89,31 @@
     padding: 0 14px;
     color: var(--accent);
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     border-left: 1.5px solid var(--border);
     background: rgba(79,142,247,.08);
-    height: 100%;
+    min-height: 46px;
     display: flex;
     align-items: center;
-    min-height: 46px;
+    white-space: nowrap;
   }
 
-  /* ── File Type Grid ── */
   .type-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 8px;
   }
-
   .type-btn {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 14px;
+    padding: 11px 12px;
     background: var(--input-bg);
     border: 1.5px solid var(--border);
     border-radius: 10px;
     cursor: pointer;
     transition: all .2s;
     position: relative;
-    overflow: hidden;
   }
   .type-btn:active { transform: scale(.97); }
   .type-btn.selected {
@@ -132,24 +123,21 @@
   .type-btn.selected::after {
     content: '✓';
     position: absolute;
-    top: 6px; right: 8px;
+    top: 5px; right: 8px;
     font-size: 11px;
     color: var(--accent);
     font-weight: 700;
   }
-
   .type-icon {
-    width: 34px; height: 34px;
-    border-radius: 8px;
+    width: 32px; height: 32px;
+    border-radius: 7px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 14px;
     flex-shrink: 0;
   }
-  .type-name { font-size: 13px; font-weight: 600; color: var(--text); }
-  .type-ext { font-size: 11px; color: var(--muted); }
+  .type-name { font-size: 13px; font-weight: 600; }
+  .type-ext  { font-size: 11px; color: var(--muted); }
 
-  /* ── Textarea ── */
   textarea {
     width: 100%;
     background: var(--input-bg);
@@ -168,24 +156,21 @@
   textarea:focus { border-color: var(--accent); }
   textarea::placeholder { color: var(--muted); }
 
-  /* ── Ads Notice ── */
   .ads-notice {
     background: rgba(124,90,247,.1);
     border: 1px solid rgba(124,90,247,.3);
     border-radius: 10px;
-    padding: 12px 16px;
+    padding: 11px 14px;
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--muted);
   }
-  .ads-notice span { font-size: 18px; }
 
-  /* ── Create Button ── */
   .create-btn {
     width: 100%;
-    padding: 16px;
+    padding: 15px;
     border: none;
     border-radius: var(--radius);
     background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -197,26 +182,21 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    letter-spacing: .3px;
     box-shadow: 0 4px 20px rgba(79,142,247,.35);
     transition: all .2s;
-    position: relative;
-    overflow: hidden;
   }
-  .create-btn:active { transform: scale(.98); }
-  .create-btn:disabled { opacity: .6; cursor: not-allowed; }
-  .create-btn .btn-icon { font-size: 20px; }
+  .create-btn:active   { transform: scale(.98); }
+  .create-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
   /* ── Ad Overlay ── */
   #adOverlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.85);
+    background: rgba(0,0,0,.88);
     z-index: 999;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
   }
   #adOverlay.active { display: flex; }
 
@@ -224,39 +204,51 @@
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 30px 24px;
+    padding: 30px 22px;
     width: 88%;
-    max-width: 360px;
+    max-width: 350px;
     text-align: center;
   }
-  .ad-box .ad-icon { font-size: 52px; margin-bottom: 14px; }
+  .ad-emoji { font-size: 50px; margin-bottom: 14px; }
   .ad-box h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-  .ad-box p { font-size: 13px; color: var(--muted); margin-bottom: 22px; line-height: 1.6; }
+  .ad-box p  { font-size: 13px; color: var(--muted); margin-bottom: 22px; line-height: 1.6; }
 
-  .countdown-ring {
-    width: 70px; height: 70px;
-    border-radius: 50%;
-    border: 4px solid var(--border);
-    border-top-color: var(--accent);
-    animation: spin 1s linear infinite;
-    margin: 0 auto 16px;
-    display: flex; align-items: center; justify-content: center;
+  /* SVG ring */
+  .ring-wrap {
     position: relative;
+    width: 72px; height: 72px;
+    margin: 0 auto 14px;
   }
-  .countdown-ring::after {
-    content: attr(data-count);
+  .ring-svg   { width: 72px; height: 72px; transform: rotate(-90deg); }
+  .ring-track { fill: none; stroke: var(--border); stroke-width: 5; }
+  .ring-fill  {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 188.5;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1s linear, stroke .3s;
+  }
+  .ring-num {
     position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 22px;
     font-weight: 700;
-    color: var(--text);
-    animation: none;
   }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
+  #adStatusText {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    min-height: 20px;
+  }
 
-  .skip-btn {
-    margin-top: 16px;
-    padding: 12px 30px;
+  .done-btn {
+    padding: 13px 20px;
     background: var(--green);
     border: none;
     border-radius: 10px;
@@ -265,33 +257,12 @@
     font-weight: 700;
     cursor: pointer;
     display: none;
-    transition: opacity .2s;
+    width: 100%;
   }
-  .skip-btn:active { opacity: .85; }
+  .done-btn:active { opacity: .85; }
 
-  /* ── Toast ── */
-  #toast {
-    position: fixed;
-    bottom: 30px; left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--green);
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    transition: transform .3s ease;
-    z-index: 9999;
-    white-space: nowrap;
-  }
-  #toast.show { transform: translateX(-50%) translateY(0); }
-  #toast.error { background: #ef4444; }
-
-  /* ── Stats bar ── */
-  .stats {
-    display: flex;
-    gap: 10px;
-  }
+  /* Stats */
+  .stats { display: flex; gap: 10px; }
   .stat-box {
     flex: 1;
     background: var(--input-bg);
@@ -300,8 +271,27 @@
     padding: 12px;
     text-align: center;
   }
-  .stat-num { font-size: 22px; font-weight: 700; color: var(--accent); }
+  .stat-num   { font-size: 22px; font-weight: 700; color: var(--accent); }
   .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--green);
+    color: #fff;
+    padding: 11px 22px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform .3s ease;
+    z-index: 9999;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  #toast.show  { transform: translateX(-50%) translateY(0); }
+  #toast.error { background: #ef4444; }
 </style>
 </head>
 <body>
@@ -310,55 +300,53 @@
 <div class="header">
   <div class="header-icon">📁</div>
   <h1>File Creator Bot</h1>
-  <p>যেকোনো ফাইল তৈরি করুন → Bot এ পান</p>
+  <p>Create any file • Get it instantly in chat</p>
 </div>
 
-<!-- Main -->
 <div class="main">
 
   <!-- Stats -->
   <div class="stats">
     <div class="stat-box">
       <div class="stat-num" id="fileCount">0</div>
-      <div class="stat-label">ফাইল তৈরি</div>
+      <div class="stat-label">Files Created</div>
     </div>
     <div class="stat-box">
       <div class="stat-num" id="adsCount">0</div>
-      <div class="stat-label">Ads দেখা</div>
+      <div class="stat-label">Ads Watched</div>
     </div>
   </div>
 
   <!-- File Name -->
   <div class="card">
-    <label>📝 ফাইলের নাম</label>
+    <label>📝 File Name</label>
     <div class="input-wrap">
-      <input type="text" id="fileName" placeholder="myfile লিখুন..." autocomplete="off" spellcheck="false">
-      <div class="ext-badge" id="extBadge">.txt</div>
+      <input type="text" id="fileName" placeholder="e.g. index" autocomplete="off" spellcheck="false">
+      <div class="ext-badge" id="extBadge">.html</div>
     </div>
   </div>
 
   <!-- File Type -->
   <div class="card">
-    <label>🗂️ ফাইলের ধরন বেছে নিন</label>
+    <label>🗂️ Select File Type</label>
     <div class="type-grid" id="typeGrid"></div>
   </div>
 
-  <!-- File Content -->
+  <!-- Content -->
   <div class="card">
-    <label>💻 কোড / কন্টেন্ট লিখুন</label>
-    <textarea id="fileContent" placeholder="এখানে কোড বা কন্টেন্ট লিখুন...&#10;&#10;উদাহরণ:&#10;&lt;!DOCTYPE html&gt;&#10;&lt;html&gt;...&lt;/html&gt;"></textarea>
+    <label>💻 File Content</label>
+    <textarea id="fileContent" placeholder="Write your code or content here..."></textarea>
   </div>
 
-  <!-- Ads Notice -->
+  <!-- Notice -->
   <div class="ads-notice">
     <span>📢</span>
-    <div>ফাইল তৈরির আগে <strong>একটি বিজ্ঞাপন</strong> দেখতে হবে। এটি সার্ভিস ফ্রি রাখতে সাহায্য করে।</div>
+    <span>A short ad will play before your file is created. This keeps the service free.</span>
   </div>
 
-  <!-- Create Button -->
+  <!-- Button -->
   <button class="create-btn" id="createBtn" onclick="startAdFlow()">
-    <span class="btn-icon">🚀</span>
-    <span>ফাইল তৈরি করুন</span>
+    🚀 Create File
   </button>
 
 </div>
@@ -366,68 +354,68 @@
 <!-- Ad Overlay -->
 <div id="adOverlay">
   <div class="ad-box">
-    <div class="ad-icon">📢</div>
-    <h3>বিজ্ঞাপন দেখুন</h3>
-    <p>ফাইল তৈরির সুবিধা পেতে একটি ছোট বিজ্ঞাপন দেখুন।<br>এটি সম্পূর্ণ বিনামূল্যে সার্ভিস দিতে সাহায্য করে।</p>
+    <div class="ad-emoji">📢</div>
+    <h3>Short Ad Playing</h3>
+    <p>Your file will be created automatically<br>after the ad finishes.</p>
 
-    <div class="countdown-ring" id="countdownRing" data-count="5"></div>
-    <p id="adStatus" style="font-size:13px;color:var(--muted);">বিজ্ঞাপন লোড হচ্ছে...</p>
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 72 72">
+        <circle class="ring-track" cx="36" cy="36" r="30"/>
+        <circle class="ring-fill" id="ringFill" cx="36" cy="36" r="30"/>
+      </svg>
+      <div class="ring-num" id="ringNum">5</div>
+    </div>
 
-    <button class="skip-btn" id="skipBtn" onclick="finishAd()">
-      ✅ বিজ্ঞাপন দেখা শেষ → ফাইল তৈরি করুন
-    </button>
+    <div id="adStatusText">Loading ad...</div>
+    <button class="done-btn" id="doneBtn" onclick="finishAd()">✅ Continue</button>
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast"></div>
 
 <script>
-// ══════════════════════════════════════
-//  Config — শুধু এগুলো পরিবর্তন করুন
-// ══════════════════════════════════════
-const ADSGRAM_BLOCK_ID = "26539"; // ← আপনার Adsgram Block ID দিন
-const AD_SECONDS       = 5;  // কত সেকেন্ড অপেক্ষা
+// ═══════════════════════
+//  CONFIG
+// ═══════════════════════
+const ADSGRAM_BLOCK_ID = "26539"; // ← Replace with your Block ID
+const AD_SECONDS       = 5;
+const CIRCUMF          = 2 * Math.PI * 30; // 188.5
 
-// ══════════════════════════════════════
-//  File Types
-// ══════════════════════════════════════
 const FILE_TYPES = [
-  { ext: "html", name: "HTML",       icon: "🌐", color: "#e34c26", bg: "rgba(227,76,38,.15)"  },
-  { ext: "css",  name: "CSS",        icon: "🎨", color: "#264de4", bg: "rgba(38,77,228,.15)"  },
-  { ext: "js",   name: "JavaScript", icon: "⚡", color: "#f7df1e", bg: "rgba(247,223,30,.15)" },
-  { ext: "py",   name: "Python",     icon: "🐍", color: "#3776ab", bg: "rgba(55,118,171,.15)" },
-  { ext: "json", name: "JSON",       icon: "📋", color: "#22c55e", bg: "rgba(34,197,94,.15)"  },
-  { ext: "xml",  name: "XML",        icon: "📄", color: "#f97316", bg: "rgba(249,115,22,.15)" },
-  { ext: "svg",  name: "SVG",        icon: "🖼️", color: "#a855f7", bg: "rgba(168,85,247,.15)" },
-  { ext: "txt",  name: "Text",       icon: "📝", color: "#94a3b8", bg: "rgba(148,163,184,.15)"},
-  { ext: "php",  name: "PHP",        icon: "🐘", color: "#777bb4", bg: "rgba(119,123,180,.15)"},
-  { ext: "sql",  name: "SQL",        icon: "🗄️", color: "#f59e0b", bg: "rgba(245,158,11,.15)" },
-  { ext: "md",   name: "Markdown",   icon: "✏️", color: "#0ea5e9", bg: "rgba(14,165,233,.15)" },
-  { ext: "sh",   name: "Shell",      icon: "💻", color: "#10b981", bg: "rgba(16,185,129,.15)" },
+  { ext:"html", name:"HTML",       icon:"🌐", color:"#e34c26", bg:"rgba(227,76,38,.15)"   },
+  { ext:"css",  name:"CSS",        icon:"🎨", color:"#264de4", bg:"rgba(38,77,228,.15)"   },
+  { ext:"js",   name:"JavaScript", icon:"⚡", color:"#f7df1e", bg:"rgba(247,223,30,.15)"  },
+  { ext:"py",   name:"Python",     icon:"🐍", color:"#3776ab", bg:"rgba(55,118,171,.15)"  },
+  { ext:"json", name:"JSON",       icon:"📋", color:"#22c55e", bg:"rgba(34,197,94,.15)"   },
+  { ext:"xml",  name:"XML",        icon:"📄", color:"#f97316", bg:"rgba(249,115,22,.15)"  },
+  { ext:"svg",  name:"SVG",        icon:"🖼️", color:"#a855f7", bg:"rgba(168,85,247,.15)"  },
+  { ext:"php",  name:"PHP",        icon:"🐘", color:"#777bb4", bg:"rgba(119,123,180,.15)" },
+  { ext:"sql",  name:"SQL",        icon:"🗄️", color:"#f59e0b", bg:"rgba(245,158,11,.15)"  },
+  { ext:"txt",  name:"Text",       icon:"📝", color:"#94a3b8", bg:"rgba(148,163,184,.15)" },
+  { ext:"md",   name:"Markdown",   icon:"✏️", color:"#0ea5e9", bg:"rgba(14,165,233,.15)"  },
+  { ext:"sh",   name:"Shell",      icon:"💻", color:"#10b981", bg:"rgba(16,185,129,.15)"  },
 ];
 
-let selectedType = FILE_TYPES.find(t => t.ext === "html");
-let fileCount = parseInt(localStorage.getItem("fc") || "0");
-let adsCount  = parseInt(localStorage.getItem("ac") || "0");
-let adTimer, adSeconds;
+const tg        = window.Telegram?.WebApp;
+let selectedExt = "html";
+let fileCount   = parseInt(localStorage.getItem("fc") || "0");
+let adsCount    = parseInt(localStorage.getItem("ac") || "0");
+let countTimer  = null;
+let secsLeft    = AD_SECONDS;
+let adDone      = false; // guard against double-fire
 
-// ── Init Telegram WebApp ──
-const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
-// ── Render stats ──
 function updateStats() {
   document.getElementById("fileCount").textContent = fileCount;
   document.getElementById("adsCount").textContent  = adsCount;
 }
 updateStats();
 
-// ── Render type grid ──
+// ── Render types ──
 function renderTypes() {
-  const grid = document.getElementById("typeGrid");
-  grid.innerHTML = FILE_TYPES.map(t => `
-    <div class="type-btn ${t.ext === selectedType.ext ? 'selected' : ''}"
+  document.getElementById("typeGrid").innerHTML = FILE_TYPES.map(t => `
+    <div class="type-btn ${t.ext === selectedExt ? 'selected' : ''}"
          onclick="selectType('${t.ext}')">
       <div class="type-icon" style="background:${t.bg};color:${t.color}">${t.icon}</div>
       <div>
@@ -440,78 +428,98 @@ function renderTypes() {
 renderTypes();
 
 function selectType(ext) {
-  selectedType = FILE_TYPES.find(t => t.ext === ext);
+  selectedExt = ext;
   document.getElementById("extBadge").textContent = "." + ext;
   renderTypes();
 }
 
 // ── Toast ──
-function showToast(msg, isError = false) {
+function showToast(msg, isError) {
   const el = document.getElementById("toast");
   el.textContent = msg;
   el.className = "show" + (isError ? " error" : "");
-  setTimeout(() => { el.className = ""; }, 3000);
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = "", 3000);
 }
 
 // ── Validate ──
 function validate() {
-  const name = document.getElementById("fileName").value.trim();
-  const content = document.getElementById("fileContent").value.trim();
-  if (!name) { showToast("⚠️ ফাইলের নাম দিন!", true); return false; }
-  if (!content) { showToast("⚠️ কন্টেন্ট লিখুন!", true); return false; }
+  if (!document.getElementById("fileName").value.trim())
+    return showToast("⚠️ Please enter a file name!", true), false;
+  if (!document.getElementById("fileContent").value.trim())
+    return showToast("⚠️ Please enter file content!", true), false;
   return true;
 }
 
-// ══════════════════════════════════════
-//  Ad Flow
-// ══════════════════════════════════════
-function startAdFlow() {
-  if (!validate()) return;
-  document.getElementById("adOverlay").classList.add("active");
-  document.getElementById("skipBtn").style.display = "none";
-  document.getElementById("adStatus").textContent = "বিজ্ঞাপন লোড হচ্ছে...";
-
-  // Try Adsgram
-  if (window.Adsgram) {
-    window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID })
-      .then(controller => controller.show())
-      .then(() => {
-        document.getElementById("adStatus").textContent = "✅ বিজ্ঞাপন সম্পন্ন!";
-        finishAd();
-      })
-      .catch(() => {
-        // Fallback: countdown timer
-        startCountdown();
-      });
-  } else {
-    // Fallback countdown
-    startCountdown();
-  }
+// ── Ring ──
+function setRing(sec) {
+  const offset = CIRCUMF * (1 - sec / AD_SECONDS);
+  const ring   = document.getElementById("ringFill");
+  ring.style.strokeDashoffset = offset;
+  ring.style.stroke = sec > 1 ? "var(--accent)" : "var(--green)";
+  document.getElementById("ringNum").textContent = sec;
 }
 
+// ── Countdown fallback ──
 function startCountdown() {
-  adSeconds = AD_SECONDS;
-  document.getElementById("adStatus").textContent = "বিজ্ঞাপন চলছে...";
-  updateCountdown();
-  adTimer = setInterval(() => {
-    adSeconds--;
-    updateCountdown();
-    if (adSeconds <= 0) {
-      clearInterval(adTimer);
-      document.getElementById("skipBtn").style.display = "block";
-      document.getElementById("adStatus").textContent = "✅ বিজ্ঞাপন শেষ! এখন ফাইল তৈরি করুন।";
+  secsLeft = AD_SECONDS;
+  setRing(secsLeft);
+  document.getElementById("adStatusText").textContent = "Please wait...";
+  document.getElementById("doneBtn").style.display = "none";
+
+  clearInterval(countTimer);
+  countTimer = setInterval(() => {
+    secsLeft--;
+    setRing(secsLeft);
+    if (secsLeft <= 0) {
+      clearInterval(countTimer);
+      countTimer = null;
+      document.getElementById("adStatusText").textContent = "✅ Done! Creating your file...";
+      document.getElementById("doneBtn").style.display = "block";
+      // Auto-proceed after 1 second
+      setTimeout(() => finishAd(), 1000);
     }
   }, 1000);
 }
 
-function updateCountdown() {
-  const ring = document.getElementById("countdownRing");
-  ring.setAttribute("data-count", adSeconds);
-  ring.style.borderTopColor = adSeconds > 0 ? "var(--accent)" : "var(--green)";
+// ── Start ad flow ──
+function startAdFlow() {
+  if (!validate()) return;
+  adDone = false;
+
+  document.getElementById("adOverlay").classList.add("active");
+  document.getElementById("doneBtn").style.display  = "none";
+  document.getElementById("adStatusText").textContent = "Loading ad...";
+  setRing(AD_SECONDS);
+
+  if (window.Adsgram) {
+    try {
+      const ctrl = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+      ctrl.show()
+        .then(() => {
+          // Adsgram ad finished normally
+          clearInterval(countTimer);
+          document.getElementById("adStatusText").textContent = "✅ Ad complete! Creating file...";
+          setTimeout(() => finishAd(), 800);
+        })
+        .catch(() => {
+          // Adsgram error or no fill → fallback
+          startCountdown();
+        });
+    } catch (e) {
+      startCountdown();
+    }
+  } else {
+    // SDK not loaded → fallback
+    startCountdown();
+  }
 }
 
+// ── Finish ad & create file ──
 function finishAd() {
-  clearInterval(adTimer);
+  if (adDone) return; // prevent double call
+  adDone = true;
+  clearInterval(countTimer);
   document.getElementById("adOverlay").classList.remove("active");
   adsCount++;
   localStorage.setItem("ac", adsCount);
@@ -519,74 +527,57 @@ function finishAd() {
   createFile();
 }
 
-// Close overlay on backdrop click
-document.getElementById("adOverlay").addEventListener("click", function(e) {
-  if (e.target === this && adSeconds <= 0) finishAd();
-});
-
-// ══════════════════════════════════════
-//  Create File & Send to Bot
-// ══════════════════════════════════════
+// ── Create file ──
 function createFile() {
-  const rawName = document.getElementById("fileName").value.trim();
-  const content = document.getElementById("fileContent").value;
-  const ext     = selectedType.ext;
-
-  // Clean name (remove existing extension if typed)
+  const rawName  = document.getElementById("fileName").value.trim();
+  const content  = document.getElementById("fileContent").value;
   const baseName = rawName.replace(/\.[^/.]+$/, "");
-  const fullName = baseName + "." + ext;
+  const fullName = baseName + "." + selectedExt;
 
-  // Build payload
   const payload = JSON.stringify({
     action:   "create_file",
     fileName: fullName,
-    fileType: ext,
+    fileType: selectedExt,
     content:  content,
     size:     new Blob([content]).size,
     userId:   tg?.initDataUnsafe?.user?.id || "unknown"
   });
 
-  // Send to bot
   if (tg && tg.sendData) {
     try {
       tg.sendData(payload);
       fileCount++;
       localStorage.setItem("fc", fileCount);
       updateStats();
-      showToast(`✅ "${fullName}" তৈরি হচ্ছে...`);
-
-      // Reset form
+      showToast(`✅ "${fullName}" sent to bot!`);
       setTimeout(() => {
-        document.getElementById("fileName").value = "";
+        document.getElementById("fileName").value    = "";
         document.getElementById("fileContent").value = "";
-      }, 1000);
+      }, 1200);
     } catch (e) {
-      // If sendData fails (e.g. opened via link not button), show success anyway
-      showToast(`✅ "${fullName}" তৈরি সম্পন্ন!`);
+      showToast(`✅ "${fullName}" created!`);
       fileCount++;
       localStorage.setItem("fc", fileCount);
       updateStats();
     }
   } else {
-    // Dev/test mode — download file locally
+    // Dev/browser mode — download
     const blob = new Blob([content], { type: "text/plain" });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement("a");
-    a.href     = url;
-    a.download = fullName;
-    a.click();
+    a.href = url; a.download = fullName; a.click();
     URL.revokeObjectURL(url);
     fileCount++;
     localStorage.setItem("fc", fileCount);
     updateStats();
-    showToast(`✅ "${fullName}" ডাউনলোড হচ্ছে!`);
+    showToast(`✅ "${fullName}" downloaded!`);
   }
 }
 
-// Load Adsgram SDK dynamically
-(function() {
+// ── Load Adsgram SDK ──
+(function () {
   const s = document.createElement("script");
-  s.src = "https://sad.adsgram.ai/js/sad.min.js";
+  s.src   = "https://sad.adsgram.ai/js/sad.min.js";
   s.async = true;
   document.head.appendChild(s);
 })();

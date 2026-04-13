@@ -72,30 +72,16 @@
     }
 
     @keyframes float {
-      0% {
-        transform: translateY(100vh) rotate(0deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.7;
-      }
-      90% {
-        opacity: 0.7;
-      }
-      100% {
-        transform: translateY(-100px) rotate(360deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
     }
 
     .floating-coin:nth-child(1) { left: 10%; animation-delay: 0s; }
     .floating-coin:nth-child(2) { left: 20%; animation-delay: 2s; }
     .floating-coin:nth-child(3) { left: 30%; animation-delay: 4s; }
     .floating-coin:nth-child(4) { left: 40%; animation-delay: 6s; }
-    .floating-coin:nth-child(5) { left: 50%; animation-delay: 8s; }
-    .floating-coin:nth-child(6) { left: 60%; animation-delay: 10s; }
-    .floating-coin:nth-child(7) { left: 70%; animation-delay: 12s; }
-    .floating-coin:nth-child(8) { left: 80%; animation-delay: 14s; }
 
     /* Header */
     .header-3d {
@@ -105,16 +91,6 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
-    }
-
-    .header-3d::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 5px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
     }
 
     .logo-container {
@@ -134,12 +110,6 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
-      animation: pulse-glow 2s infinite;
-    }
-
-    @keyframes pulse-glow {
-      0%, 100% { transform: scale(1); box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); }
-      50% { transform: scale(1.05); box-shadow: 0 15px 30px rgba(245, 158, 11, 0.5); }
     }
 
     .app-title {
@@ -148,42 +118,20 @@
       background: linear-gradient(135deg, #ffffff, #e0e0e0);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
 
-    .app-subtitle {
-      color: rgba(255,255,255,0.8);
-      font-size: 14px;
-      font-weight: 500;
-    }
+    .app-subtitle { color: rgba(255,255,255,0.8); font-size: 14px; }
 
     /* Content Area */
-    .content {
-      padding: 20px;
-      position: relative;
-      z-index: 1;
-    }
+    .content { padding: 20px; position: relative; z-index: 1; }
 
     /* View Management */
-    .view {
-      display: none;
-      animation: slideIn 0.4s ease-out;
-    }
-
+    .view { display: none; animation: slideIn 0.4s ease-out; }
     @keyframes slideIn {
-      from { 
-        opacity: 0; 
-        transform: translateY(20px) perspective(1000px) rotateX(5deg);
-      }
-      to { 
-        opacity: 1; 
-        transform: translateY(0) perspective(1000px) rotateX(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
-    #task-view {
-      display: block;
-    }
+    #task-view { display: block; }
 
     /* 3D Card Design */
     .card-3d {
@@ -193,47 +141,18 @@
       margin-bottom: 20px;
       box-shadow: var(--shadow-3d);
       border: 1px solid rgba(255,255,255,0.05);
-      transform-style: preserve-3d;
-      transition: all 0.3s ease;
       position: relative;
-      overflow: hidden;
-    }
-
-    .card-3d:hover {
-      transform: translateY(-5px) rotateX(5deg);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-    }
-
-    .card-3d::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      border-radius: 20px 20px 0 0;
     }
 
     /* Balance Display */
-    .balance-display {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    .balance-label {
-      font-size: 14px;
-      color: var(--text-dim);
-      margin-bottom: 5px;
-    }
-
+    .balance-display { text-align: center; margin-bottom: 10px; }
+    .balance-label { font-size: 14px; color: var(--text-dim); margin-bottom: 5px; }
     .balance-amount {
       font-size: 42px;
       font-weight: 800;
       background: linear-gradient(135deg, #ffffff, var(--primary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
     }
 
     /* Stats Grid */
@@ -243,353 +162,98 @@
       gap: 15px;
       margin-top: 20px;
     }
-
     .stat-item {
       background: rgba(255,255,255,0.05);
       padding: 15px;
       border-radius: 15px;
       border: 1px solid rgba(255,255,255,0.1);
-      transition: all 0.3s ease;
-      transform: translateZ(10px);
+      text-align: center;
     }
-
-    .stat-item:hover {
-      transform: translateY(-5px) translateZ(15px);
-      background: rgba(255,255,255,0.08);
-    }
-
-    .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 5px;
-      color: #ffffff;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: var(--text-dim);
-    }
+    .stat-value { font-size: 24px; font-weight: 700; margin-bottom: 5px; color: #ffffff; }
+    .stat-label { font-size: 12px; color: var(--text-dim); }
 
     /* Progress Circle */
-    .progress-container {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0;
-    }
-
+    .progress-container { display: flex; justify-content: center; margin: 20px 0; }
     .progress-circle-3d {
-      width: 120px;
-      height: 120px;
+      width: 120px; height: 120px;
       border-radius: 50%;
       background: conic-gradient(var(--primary) 0%, var(--card-bg) 0%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       position: relative;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-      transform: translateZ(20px);
     }
-
     .progress-circle-3d::before {
-      content: '';
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: var(--card-bg);
-      border-radius: 50%;
+      content: ''; position: absolute; width: 100px; height: 100px;
+      background: var(--card-bg); border-radius: 50%;
     }
+    .progress-text { position: relative; z-index: 1; font-size: 18px; font-weight: 700; }
 
-    .progress-text {
-      position: relative;
-      z-index: 1;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-light);
-    }
-
-    /* 3D Buttons */
+    /* Buttons */
     .btn-3d {
-      width: 100%;
-      padding: 18px;
-      font-size: 16px;
-      font-weight: 700;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      width: 100%; padding: 18px; font-size: 16px; font-weight: 700;
+      border: none; border-radius: 15px; cursor: pointer; transition: all 0.3s ease;
       background: linear-gradient(145deg, var(--primary), var(--primary-dark));
-      color: white;
-      box-shadow: 
-        0 10px 20px rgba(139, 92, 246, 0.3),
-        inset 0 1px 0 rgba(255,255,255,0.2);
-      position: relative;
-      overflow: hidden;
-      transform-style: preserve-3d;
-      margin-bottom: 15px;
+      color: white; margin-bottom: 15px;
     }
-
-    .btn-3d::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .btn-3d:hover {
-      transform: translateY(-5px) translateZ(10px);
-      box-shadow: 
-        0 15px 30px rgba(139, 92, 246, 0.4),
-        inset 0 1px 0 rgba(255,255,255,0.3);
-    }
-
-    .btn-3d:hover::before {
-      left: 100%;
-    }
-
-    .btn-3d:active {
-      transform: translateY(0) scale(0.98);
-    }
-
     .btn-3d:disabled {
-      background: linear-gradient(145deg, #555, #666);
-      color: #888;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
+      background: linear-gradient(145deg, #374151, #1F2937);
+      color: #9CA3AF; cursor: not-allowed;
     }
+    .btn-success { background: linear-gradient(145deg, var(--secondary), #059669); }
+    .btn-accent { background: linear-gradient(145deg, var(--accent), #D97706); }
+    .btn-primary { background: linear-gradient(145deg, #3B82F6, #2563EB); }
+    
+    .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+    .btn-group .btn-3d { flex: 1; margin-bottom: 0; }
 
-    .btn-3d:disabled:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
-    .btn-success {
-      background: linear-gradient(145deg, var(--secondary), #059669);
-      box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-success:hover {
-      box-shadow: 0 15px 30px rgba(16, 185, 129, 0.4);
-    }
-
-    .btn-accent {
-      background: linear-gradient(145deg, var(--accent), #D97706);
-      box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
-    }
-
-    .btn-accent:hover {
-      box-shadow: 0 15px 30px rgba(245, 158, 11, 0.4);
-    }
-
-    /* Button Groups */
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .btn-group .btn-3d {
-      flex: 1;
-      margin-bottom: 0;
-    }
-
-    /* Input Groups */
-    .input-group {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    .input-label {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--text-dim);
-      font-size: 14px;
-      font-weight: 600;
-    }
-
+    /* Inputs */
+    .input-group { margin-bottom: 20px; text-align: left; }
+    .input-label { display: block; margin-bottom: 8px; color: var(--text-dim); font-size: 14px; font-weight: 600; }
     .input-3d {
-      width: 100%;
-      padding: 16px;
-      border-radius: 12px;
-      border: 2px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05);
-      color: var(--text-light);
-      font-size: 16px;
-      transition: all 0.3s ease;
-      box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+      width: 100%; padding: 16px; border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
+      color: var(--text-light); font-size: 16px;
     }
-
-    .input-3d:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 
-        inset 0 2px 10px rgba(0,0,0,0.1),
-        0 0 0 3px rgba(139, 92, 246, 0.1);
-    }
+    .input-3d:focus { outline: none; border-color: var(--primary); }
 
     /* Footer Navigation */
     .footer-nav {
-      display: flex;
-      background: linear-gradient(145deg, var(--card-bg), #1a2438);
-      padding: 10px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+      display: flex; background: linear-gradient(145deg, var(--card-bg), #1a2438);
+      padding: 10px; border-top: 1px solid rgba(255,255,255,0.05);
     }
-
     .nav-btn {
-      flex: 1;
-      background: none;
-      border: none;
-      color: var(--text-dim);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      padding: 8px 5px;
-      border-radius: 12px;
-      transition: all 0.3s ease;
-      position: relative;
+      flex: 1; background: none; border: none; color: var(--text-dim);
+      display: flex; flex-direction: column; align-items: center; font-size: 12px;
+      cursor: pointer; padding: 8px 5px; border-radius: 12px;
     }
-
-    .nav-btn.active {
-      color: var(--primary);
-      transform: translateY(-5px);
-    }
-
-    .nav-btn.active::before {
-      content: '';
-      position: absolute;
-      top: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 6px;
-      height: 6px;
-      background: var(--primary);
-      border-radius: 50%;
-    }
-
-    .nav-btn:hover:not(.active) {
-      color: #ffffff;
-      transform: translateY(-2px);
-    }
-
+    .nav-btn.active { color: var(--primary); }
     .nav-icon {
-      width: 28px;
-      height: 28px;
-      margin-bottom: 4px;
-      background: linear-gradient(145deg, var(--primary), var(--primary-dark));
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
-      transition: all 0.3s ease;
+      width: 28px; height: 28px; margin-bottom: 4px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .nav-btn.active .nav-icon {
-      transform: scale(1.1);
-      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
-    }
+    .nav-btn.active .nav-icon { background: linear-gradient(145deg, var(--primary), var(--primary-dark)); color: white;}
 
     /* Status Messages */
     .status-message {
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%) translateZ(50px);
-      width: 90%;
-      max-width: 380px;
-      padding: 16px 20px;
-      border-radius: 15px;
-      font-weight: 600;
-      display: none;
-      animation: slideInUp 0.3s ease;
-      z-index: 1000;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      width: 90%; max-width: 380px; padding: 16px 20px; border-radius: 15px;
+      font-weight: 600; display: none; z-index: 1000; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
-
-    @keyframes slideInUp {
-      from { 
-        opacity: 0; 
-        transform: translateX(-50%) translateY(20px) translateZ(50px);
-      }
-      to { 
-        opacity: 1; 
-        transform: translateX(-50%) translateY(0) translateZ(50px);
-      }
-    }
-
-    .status-success {
-      display: block;
-      background: rgba(16, 185, 129, 0.9);
-      border-left: 5px solid var(--secondary);
-      color: white;
-    }
-
-    .status-error {
-      display: block;
-      background: rgba(239, 68, 68, 0.9);
-      border-left: 5px solid #EF4444;
-      color: white;
-    }
-
-    .status-info {
-      display: block;
-      background: rgba(59, 130, 246, 0.9);
-      border-left: 5px solid #3B82F6;
-      color: white;
-    }
-
-    /* Referral Link */
-    .referral-link {
-      background: rgba(255,255,255,0.05);
-      padding: 16px;
-      border-radius: 12px;
-      word-wrap: break-word;
-      border: 2px dashed rgba(255,255,255,0.2);
-      margin-top: 15px;
-      cursor: pointer;
-      color: #e0e0e0;
-      transition: all 0.3s ease;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    .referral-link:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: var(--primary);
-    }
+    .status-success { background: #10B981; color: white; }
+    .status-error { background: #EF4444; color: white; }
+    .status-info { background: #3B82F6; color: white; }
   </style>
 </head>
 <body>
   <div class="app-container">
     <div class="bg-elements">
-      <div class="floating-coin"></div>
-      <div class="floating-coin"></div>
-      <div class="floating-coin"></div>
-      <div class="floating-coin"></div>
-      <div class="floating-coin"></div>
-      <div class="floating-coin"></div>
-      <div class="floating-coin"></div>
-      <div class="floating-coin"></div>
+      <div class="floating-coin"></div><div class="floating-coin"></div>
+      <div class="floating-coin"></div><div class="floating-coin"></div>
     </div>
 
     <div class="header-3d">
       <div class="logo-container">
-        <div class="logo-icon">
-          <i class="fas fa-coins" style="color: white; font-size: 24px;"></i>
-        </div>
-        <div>
-          <h1 class="app-title">EarningUp</h1>
-          <p class="app-subtitle">Watch Ads & Earn Money</p>
-        </div>
+        <div class="logo-icon"><i class="fas fa-coins" style="color: white; font-size: 24px;"></i></div>
+        <div><h1 class="app-title">EarningUp</h1><p class="app-subtitle">Watch Ads & Earn Money</p></div>
       </div>
     </div>
 
@@ -602,34 +266,26 @@
           </div>
 
           <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-value" id="watched-ads">0</div>
-              <div class="stat-label">Watched Ads</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value" id="earned-points">0</div>
-              <div class="stat-label">Earned Points</div>
-            </div>
+            <div class="stat-item"><div class="stat-value" id="watched-ads">0</div><div class="stat-label">Watched Ads</div></div>
+            <div class="stat-item"><div class="stat-value" id="earned-points">0</div><div class="stat-label">Earned Points</div></div>
           </div>
 
           <div class="progress-container">
-            <div class="progress-circle-3d" id="progress-circle">
-              <div class="progress-text" id="progress-text">0%</div>
-            </div>
+            <div class="progress-circle-3d" id="progress-circle"><div class="progress-text" id="progress-text">0%</div></div>
           </div>
 
-          <button class="btn-3d" id="manual-ad-btn" onclick="watchAd()" style="background: linear-gradient(145deg, #3B82F6, #2563EB);">
+          <button class="btn-3d btn-primary" id="manual-ad-btn" onclick="watchAd()">
             <i class="fas fa-video" style="margin-right: 8px;"></i>
             Watch Ad
           </button>
 
-          <button class="btn-3d btn-accent" id="auto-ad-btn">
+          <button class="btn-3d btn-accent" id="auto-ad-btn" onclick="startAutoAds()">
             <i class="fas fa-play-circle" style="margin-right: 8px;"></i>
             Auto Show Ads
           </button>
 
           <div class="btn-group">
-            <button class="btn-3d" id="stop-auto-btn" disabled>
+            <button class="btn-3d" id="stop-auto-btn" onclick="stopAutoAds()" disabled>
               <i class="fas fa-stop" style="margin-right: 8px;"></i>
               Stop Auto
             </button>
@@ -643,149 +299,44 @@
 
       <div id="withdraw-view" class="view">
         <div class="card-3d">
-          <h2 style="margin-bottom: 20px; text-align: center;">
-            <i class="fas fa-wallet" style="margin-right: 10px;"></i>
-            Withdraw Earnings
-          </h2>
-
+          <h2 style="margin-bottom: 20px; text-align: center;"><i class="fas fa-wallet" style="margin-right: 10px;"></i>Withdraw Earnings</h2>
           <div class="balance-display" style="margin-bottom: 20px;">
             <div class="balance-label">Available Balance</div>
             <div class="balance-amount" id="withdraw-balance">$0.00</div>
           </div>
-
           <div class="input-group">
             <label class="input-label">Withdrawal Amount</label>
-            <input type="number" class="input-3d" id="withdraw-amount" placeholder="Enter amount to withdraw">
+            <input type="number" class="input-3d" id="withdraw-amount" placeholder="Enter amount">
           </div>
-
           <div class="input-group">
             <label class="input-label">Payment Method</label>
             <select class="input-3d" id="payment-method">
-              <option value="bkash">USDT</option>
-              <option value="nagad">Ton</option>
-              <option value="manual">PayPal</option>
+              <option value="usdt">USDT</option><option value="ton">Ton</option><option value="paypal">PayPal</option>
             </select>
           </div>
-
           <div class="input-group">
             <label class="input-label">Address</label>
-            <input type="text" class="input-3d" id="withdraw-phone" placeholder="Enter your phone number">
+            <input type="text" class="input-3d" id="withdraw-phone" placeholder="Enter your address">
           </div>
-
-          <button class="btn-3d btn-success" onclick="withdrawPoints()">
-            <i class="fas fa-paper-plane" style="margin-right: 8px;"></i>
-            Request Withdrawal
-          </button>
-
-          <p id="withdraw-status" style="text-align: center; margin-top: 15px; color: var(--text-dim); font-size: 14px;"></p>
-        </div>
-      </div>
-
-      <div id="refer-view" class="view">
-        <div class="card-3d">
-          <h2 style="margin-bottom: 20px; text-align: center;">
-            <i class="fas fa-users" style="margin-right: 10px;"></i>
-            Refer & Earn
-          </h2>
-
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-value" id="referral-count">0</div>
-              <div class="stat-label">Total Referrals</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value" id="referral-earnings">$0.00</div>
-              <div class="stat-label">Referral Earnings</div>
-            </div>
-          </div>
-
-          <p style="text-align: center; margin: 20px 0; color: var(--text-dim);">
-            Invite friends and earn 20% of their earnings!
-          </p>
-
-          <div class="input-group">
-            <label class="input-label">Your Referral Link</label>
-            <div class="referral-link" id="referral-link">
-              https://t.me/techfisms_bot?start=ref12345
-            </div>
-          </div>
-
-          <button class="btn-3d" onclick="copyReferralLink()">
-            <i class="fas fa-copy" style="margin-right: 8px;"></i>
-            Copy Referral Link
-          </button>
+          <button class="btn-3d btn-success" onclick="withdrawPoints()"><i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Request Withdrawal</button>
         </div>
       </div>
 
       <div id="profile-view" class="view">
         <div class="card-3d">
-          <h2 style="margin-bottom: 20px; text-align: center;">
-            <i class="fas fa-user" style="margin-right: 10px;"></i>
-            Your Profile
-          </h2>
-
-          <div style="text-align: center; margin-bottom: 20px;">
-            <div style="width: 80px; height: 80px; background: linear-gradient(145deg, var(--primary), var(--primary-dark)); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 15px;">
-              <i class="fas fa-user" style="color: white; font-size: 32px;"></i>
-            </div>
-            <h3 id="user-name" style="margin-bottom: 5px;">@username</h3>
-            <p style="color: var(--text-dim); font-size: 14px;">Member since 2023</p>
-          </div>
-
+          <h2 style="margin-bottom: 20px; text-align: center;"><i class="fas fa-user" style="margin-right: 10px;"></i>Your Profile</h2>
           <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-value" id="profile-ads">0</div>
-              <div class="stat-label">Total Ads</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-value" id="profile-earnings">$0.00</div>
-              <div class="stat-label">Total Earnings</div>
-            </div>
-          </div>
-
-          <div style="margin-top: 20px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-              <span style="color: var(--text-dim);">Account Level</span>
-              <span style="font-weight: 600;">Bronze</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-              <span style="color: var(--text-dim);">Daily Limit</span>
-              <span style="font-weight: 600;">50 Ads</span>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span style="color: var(--text-dim);">Next Payout</span>
-              <span style="font-weight: 600;">$5.00</span>
-            </div>
+            <div class="stat-item"><div class="stat-value" id="profile-ads">0</div><div class="stat-label">Total Ads</div></div>
+            <div class="stat-item"><div class="stat-value" id="profile-earnings">$0.00</div><div class="stat-label">Total Earnings</div></div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="footer-nav">
-      <button class="nav-btn active" onclick="showView('task-view')">
-        <div class="nav-icon">
-          <i class="fas fa-tasks"></i>
-        </div>
-        <span>Tasks</span>
-      </button>
-      <button class="nav-btn" onclick="showView('withdraw-view')">
-        <div class="nav-icon">
-          <i class="fas fa-wallet"></i>
-        </div>
-        <span>Withdraw</span>
-      </button>
-      <button class="nav-btn" onclick="showView('refer-view')">
-        <div class="nav-icon">
-          <i class="fas fa-users"></i>
-        </div>
-        <span>Refer</span>
-      </button>
-      <button class="nav-btn" onclick="showView('profile-view')">
-        <div class="nav-icon">
-          <i class="fas fa-user"></i>
-        </div>
-        <span>Profile</span>
-      </button>
+      <button class="nav-btn active" onclick="showView('task-view')"><div class="nav-icon"><i class="fas fa-tasks"></i></div><span>Tasks</span></button>
+      <button class="nav-btn" onclick="showView('withdraw-view')"><div class="nav-icon"><i class="fas fa-wallet"></i></div><span>Withdraw</span></button>
+      <button class="nav-btn" onclick="showView('profile-view')"><div class="nav-icon"><i class="fas fa-user"></i></div><span>Profile</span></button>
     </div>
 
     <div class="status-message" id="status-message"></div>
@@ -794,223 +345,156 @@
   <script src='//libtl.com/sdk.js' data-zone='9804827' data-sdk='show_9804827'></script>
 
   <script>
-    const MIN_WITHDRAW_POINTS = 5;
-    const ADMIN_USER_ID = 7694112804;
-    const BOT_TOKEN = "YOUR_BOT_TOKEN_HERE";
-    let watchedAdsCount = 0;
-    let earnedPoints = 0.00;
-    let autoAdInterval;
-    let referralCount = 0;
+    let watchedAdsCount = parseInt(localStorage.getItem('watchedAdsCount')) || 0;
+    let earnedPoints = parseFloat(localStorage.getItem('earnedPoints')) || 0.00;
+    
+    let isAdPlaying = false;
+    let isAutoRunning = false;
+    let cooldownTimer;
 
     // Adsgram Initialization
     let adsgramController = null;
     if (window.Adsgram) {
-      // REPLACE "YOUR_ADSGRAM_BLOCK_ID_HERE" WITH YOUR ACTUAL ADSGRAM BLOCK ID
+      // আপনার Adsgram Block ID এখানে বসান
       adsgramController = window.Adsgram.init({ blockId: "YOUR_ADSGRAM_BLOCK_ID_HERE" }); 
     }
 
-    // Initialize the app
-    document.addEventListener('DOMContentLoaded', function() {
-      // Load data from localStorage
-      if (localStorage.getItem('watchedAdsCount')) {
-        watchedAdsCount = parseInt(localStorage.getItem('watchedAdsCount'));
-        earnedPoints = parseFloat(localStorage.getItem('earnedPoints'));
-        referralCount = parseInt(localStorage.getItem('referralCount')) || 0;
-        
-        updateUI();
-      }
+    document.addEventListener('DOMContentLoaded', updateUI);
 
-      // Set user name
-      document.getElementById('user-name').textContent = "@exampleUser";
-    });
-
-    // View management
     function showView(viewId) {
-      // Hide all views
-      document.querySelectorAll('.view').forEach(view => {
-        view.style.display = 'none';
-      });
-      
-      // Show selected view
+      document.querySelectorAll('.view').forEach(view => view.style.display = 'none');
       document.getElementById(viewId).style.display = 'block';
       
-      // Update active nav button
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      
-      // Set the active button based on view
-      const activeBtnMap = {
-        'task-view': 0,
-        'withdraw-view': 1,
-        'refer-view': 2,
-        'profile-view': 3
-      };
-      
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtnMap = {'task-view': 0, 'withdraw-view': 1, 'profile-view': 2};
       document.querySelectorAll('.nav-btn')[activeBtnMap[viewId]].classList.add('active');
       
-      // Update view-specific data
-      if (viewId === 'withdraw-view') {
-        document.getElementById('withdraw-balance').textContent = '$' + earnedPoints.toFixed(2);
-      } else if (viewId === 'refer-view') {
-        document.getElementById('referral-count').textContent = referralCount;
-        document.getElementById('referral-earnings').textContent = '$' + (referralCount * 2).toFixed(2);
-      } else if (viewId === 'profile-view') {
+      if (viewId === 'withdraw-view') document.getElementById('withdraw-balance').textContent = '$' + earnedPoints.toFixed(2);
+      if (viewId === 'profile-view') {
         document.getElementById('profile-ads').textContent = watchedAdsCount;
         document.getElementById('profile-earnings').textContent = '$' + earnedPoints.toFixed(2);
       }
     }
 
-    // Update UI elements
     function updateUI() {
       document.getElementById('watched-ads').textContent = watchedAdsCount;
       document.getElementById('earned-points').textContent = earnedPoints.toFixed(2);
       document.getElementById('balance-amount').textContent = '$' + earnedPoints.toFixed(2);
       
-      // Update progress circle
       const percent = Math.min((watchedAdsCount / 100) * 100, 100);
       document.getElementById('progress-text').textContent = Math.floor(percent) + '%';
-      document.getElementById('progress-circle').style.background = 
-        `conic-gradient(var(--primary) ${percent}%, var(--card-bg) ${percent}%)`;
+      document.getElementById('progress-circle').style.background = `conic-gradient(var(--primary) ${percent}%, var(--card-bg) ${percent}%)`;
     }
 
-    // Success Handler
+    // শুধুমাত্র সফলভাবে অ্যাড দেখলেই পয়েন্ট যোগ হবে
     function handleAdSuccess(networkName) {
       watchedAdsCount++;
       earnedPoints += 0.5;
-      
       localStorage.setItem('watchedAdsCount', watchedAdsCount);
       localStorage.setItem('earnedPoints', earnedPoints.toFixed(2));
-      
       updateUI();
       showStatus(`Success! +$0.50 added from ${networkName}.`, 'success');
     }
 
-    // Watch ad function (Alternates between Monetag and Adsgram)
+    // ৫ সেকেন্ডের টাইমার
+    function startCooldown(callback) {
+      let timeLeft = 5;
+      const btn = document.getElementById('manual-ad-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-clock" style="margin-right: 8px;"></i> Wait ${timeLeft}s...`;
+
+      cooldownTimer = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          btn.innerHTML = `<i class="fas fa-clock" style="margin-right: 8px;"></i> Wait ${timeLeft}s...`;
+        } else {
+          clearInterval(cooldownTimer);
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-video" style="margin-right: 8px;"></i> Watch Ad`;
+          
+          // টাইমার শেষ হলে পরবর্তী অটো অ্যাড চালু করবে (যদি অটো অন থাকে)
+          if (callback) callback();
+        }
+      }, 1000);
+    }
+
+    // অ্যাড ফিনিশ/ফেইল হওয়ার পর কল হবে
+    function onAdFinished() {
+      isAdPlaying = false;
+      startCooldown(() => {
+        if (isAutoRunning) {
+          watchAd(); // অটো অ্যাড চালু থাকলে আবার অ্যাড কল করবে
+        }
+      });
+    }
+
+    // মেইন ওয়াচ অ্যাড ফাংশন
     function watchAd() {
-      // Logic: If watchedAdsCount is Even (0, 2, 4...) -> Show Monetag
-      // If watchedAdsCount is Odd (1, 3, 5...) -> Show Adsgram
+      if (isAdPlaying || document.getElementById('manual-ad-btn').disabled) return;
+      isAdPlaying = true;
+
       const isMonetagTurn = (watchedAdsCount % 2 === 0);
 
       if (isMonetagTurn) {
-        // --- Show Monetag ---
+        // Monetag Ad
         if (typeof show_9804827 === 'function') {
           show_9804827().then(() => {
             handleAdSuccess("Monetag");
+            onAdFinished();
           }).catch(err => {
             console.error('Monetag Ad error:', err);
-            showStatus('Failed to load Monetag ad.', 'error');
+            showStatus('Monetag ad failed. No points added.', 'error');
+            onAdFinished(); // ফেইল হলেও টাইমার উঠবে
           });
         } else {
-          // Fallback for testing if SDK is blocked
-          handleAdSuccess("Monetag (Test)");
+          showStatus('Monetag is not ready yet.', 'error');
+          onAdFinished();
         }
       } else {
-        // --- Show Adsgram ---
+        // Adsgram Ad
         if (adsgramController) {
           adsgramController.show().then((result) => {
-            // User finished watching Adsgram ad
             handleAdSuccess("Adsgram");
+            onAdFinished();
           }).catch((result) => {
-            // User skipped or error occurred
-            console.error('Adsgram Ad error/skipped:', result);
-            showStatus('Adsgram ad failed or was skipped.', 'error');
+            console.error('Adsgram Ad error:', result);
+            showStatus('Adsgram ad failed or skipped. No points added.', 'error');
+            onAdFinished();
           });
         } else {
-          // Fallback if Adsgram isn't initialized properly
-          handleAdSuccess("Adsgram (Test)");
+          showStatus('Adsgram is not ready yet.', 'error');
+          onAdFinished();
         }
       }
     }
 
-    // Auto ads functions
+    // Auto Ad Control
     function startAutoAds() {
-      autoAdInterval = setInterval(watchAd, 10000); // Changed to 10s to give video ads time to finish
+      isAutoRunning = true;
       document.getElementById('auto-ad-btn').disabled = true;
       document.getElementById('stop-auto-btn').disabled = false;
-      showStatus('Auto ads started! Ads will play automatically.', 'info');
+      showStatus('Auto ads started!', 'info');
+      
+      // যদি বর্তমানে অ্যাড প্লে না হয়ে থাকে বা টাইমার না চলে, তবে অ্যাড চালু করবে
+      if (!isAdPlaying && !document.getElementById('manual-ad-btn').disabled) {
+        watchAd();
+      }
     }
 
     function stopAutoAds() {
-      clearInterval(autoAdInterval);
+      isAutoRunning = false;
       document.getElementById('auto-ad-btn').disabled = false;
       document.getElementById('stop-auto-btn').disabled = true;
       showStatus('Auto ads stopped.', 'info');
     }
 
-    // Withdraw function
-    function withdrawPoints() {
-      const amount = parseFloat(document.getElementById('withdraw-amount').value);
-      const method = document.getElementById('payment-method').value;
-      const phone = document.getElementById('withdraw-phone').value;
-
-      if (amount < MIN_WITHDRAW_POINTS) {
-        document.getElementById('withdraw-status').textContent = `Minimum withdrawal is $${MIN_WITHDRAW_POINTS}.`;
-        showStatus(`Minimum withdrawal is $${MIN_WITHDRAW_POINTS}.`, 'error');
-        return;
-      }
-
-      if (amount > earnedPoints) {
-        document.getElementById('withdraw-status').textContent = `Insufficient balance.`;
-        showStatus('Insufficient balance.', 'error');
-        return;
-      }
-
-      if (!phone) {
-        document.getElementById('withdraw-status').textContent = `Please enter your phone number.`;
-        showStatus('Please enter your phone number.', 'error');
-        return;
-      }
-
-      // Process withdrawal
-      earnedPoints -= amount;
-      document.getElementById('earned-points').textContent = earnedPoints.toFixed(2);
-      document.getElementById('balance-amount').textContent = '$' + earnedPoints.toFixed(2);
-      localStorage.setItem('earnedPoints', earnedPoints.toFixed(2));
-
-      const msg = `Withdrawal Request from @exampleUser:\nAmount: $${amount}\nPayment Method: ${method}\nPhone: ${phone}`;
-      sendWithdrawRequestToAdmin(msg);
-
-      document.getElementById('withdraw-status').textContent = 'Withdrawal request sent!';
-      document.getElementById('withdraw-amount').value = '';
-      document.getElementById('withdraw-phone').value = '';
-      
-      showStatus('Withdrawal request sent successfully!', 'success');
-    }
-
-    // Copy referral link
-    function copyReferralLink() {
-      const referralLink = document.getElementById('referral-link').textContent.trim();
-      navigator.clipboard.writeText(referralLink).then(() => {
-        showStatus('Referral link copied to clipboard!', 'success');
-      }).catch(err => {
-        console.error('Failed to copy: ', err);
-        showStatus('Failed to copy referral link.', 'error');
-      });
-    }
-
-    // Send withdrawal request to admin
-    function sendWithdrawRequestToAdmin(message) {
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_USER_ID}&text=${encodeURIComponent(message)}`)
-        .then(res => res.json())
-        .then(data => console.log("Sent:", data))
-        .catch(err => console.error("Error:", err));
-    }
-
-    // Show status message
     function showStatus(message, type) {
       const statusEl = document.getElementById('status-message');
       statusEl.textContent = message;
       statusEl.className = `status-message status-${type}`;
-      
-      setTimeout(() => {
-        statusEl.style.display = 'none';
-      }, 4000);
+      statusEl.style.display = 'block';
+      setTimeout(() => statusEl.style.display = 'none', 3000);
     }
-
-    // Event listeners
-    document.getElementById('auto-ad-btn').addEventListener('click', startAutoAds);
-    document.getElementById('stop-auto-btn').addEventListener('click', stopAutoAds);
   </script>
 </body>
 </html>

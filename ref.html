@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ref</title>
+  <link rel="stylesheet" href="ref.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+
+<body>
+  <div class="container">
+    <nav>
+      <ul>
+        <li>
+          <a href="/index.html">
+            <i class="fa fa-home"></i>
+          </a>
+        </li>
+        <li>
+          <a href="/task.html">
+            <i class="fa fa-tasks"></i>
+          </a>
+        </li>
+        <li>
+          <a href="/ref.html" class="active">
+            <i class="fa fa-users"></i>
+          </a>
+        </li>
+        <li>
+          <a href="/leaderboard.html">
+            <i class="fa fa-trophy"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="ref">
+      <h1>Referrals</h1>
+      <div class="copyCont">
+        <ul>
+          <h2>My Username</h2>
+          <p class="usernameCont"></p>
+        </ul>
+        <div class="btn" id="CopyBtn" ref={copyBtnRef}>
+          Copy
+        </div>
+      </div>
+      <h3>Referrals:<span class="ref_no_cont">0</span></h3>
+      <div class="rows">
+        <form action="" id="refForm">
+          <input type="text" name="username" id="usernameinput" placeholder="Input Username">
+          <p><span>Note:</span> you can submit both empty username, if no one reffered you</p>
+          <button class="btn" id="submitBtn">Submit</button>
+        </form>
+        <ul id="refCont">
+          
+        </ul>
+      </div>
+    </div>
+    </main>
+  </div>
+</body>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="./ref.js" type="module"></script>
+
+</html>

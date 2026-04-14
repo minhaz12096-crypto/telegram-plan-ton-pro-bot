@@ -1,0 +1,117 @@
+* {
+  box-sizing: border-box;
+  padding: 0%;
+  margin: 0%;
+  list-style: none;
+  text-decoration: none;
+}
+:root {
+  --bg: #000;
+  --text: #fff;
+  --primary: #360606;
+}
+body {
+  background: var(--bg);
+}
+.container {
+  width: 100%;
+  height: 100vh;
+  font-family: "Courier New", Courier, monospace;
+  color: var(--text);
+  background: var(--bg);
+}
+/* NAV */
+.container nav {
+  width: 100%;
+  height: auto;
+  padding: 10px 10px;
+  position: fixed;
+  bottom: 0%;
+  left: 0%;
+}
+.container nav ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.container nav ul li a {
+  padding: 5px 10px;
+  font-size: 17px;
+  color: var(--bg);
+  background: var(--text);
+  border-radius: 5px;
+}
+.container nav ul li a.active {
+  color: var(--text);
+  background: var(--primary);
+  border-radius: 5px;
+}
+
+/* HEADER */
+.container header {
+  width: 100%;
+  padding-top: 20px;
+  /* border: 1px solid var(--text); */
+}
+.container header .no {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.container header .no img {
+  object-fit: cover;
+  width: 20px;
+}
+.container header .no h1 {
+  font-size: 40px;
+}
+.container header h2 {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+/* TAPCOUNT */
+.container .tapCount {
+  width: 100%;
+  height: 280px;
+  margin-top: 30px;
+}
+.container .tapCount img {
+  object-fit: contain;
+  width: 100%;
+  height: 250px;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+.container .tapCount h4{
+  position: absolute;
+  font-size: 30px;
+  z-index: 999999;
+  top: 50%;
+  left: 50%;
+  width: 25px;
+  height: 25px;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  transition: left 0.5s, top 0.5s, opacity 0.5s;
+  }
+
+/* SCORE */
+.container h3 {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  font-size: 30px;
+}
